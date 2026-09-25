@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-select=no">
+    <title>The Crystal Sphere: Dice Roller</title>
+    <style>
+        :root {
+            /* Color Palette */
+            --primary-red: #5c1d1d;
+            --accent-gold: #7d3c1b;
+            --border-warm: #d3c4a8;
+            --border-light: #e2d7c5;
+            --border-dark: #bdae93;
+            --bg-cream: #faf8f5;
+            --bg-cream-dark: #f4f1ea;
+            --bg-card: #fdfbf7;
+            --text-dark: #2c251e;
+            --text-muted: #7c6f64;
+            
+            /* System Colors */
+            --success-green: #1b6b55;
+            --success-bg: #edf7f4;
+            --success-border: #c2e2d9;
+            --danger-red: #b82c2c;
+            --overlay-dark: rgba(44, 37, 30, 0.6);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-cream-dark);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 20px 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 950px;
+            background: #fff;
+            padding: 25px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 1px solid var(--border-warm);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-red);
+            border-bottom: 2px solid var(--primary-red);
+            padding-bottom: 8px;
+            margin-top: 0;
+            font-size: 1.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        h2 {
+            color: var(--accent-gold);
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 5px;
+            margin-top: 20px;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Top Bar: Character & System Controls */
+        .character-ribbon {
+            display: grid;
+            grid-template-columns: 1fr auto auto auto auto;
+            gap: 8px;
+            align-items: center;
+            background-color: var(--bg-cream);
+            padding: 10px 12px;
+            border: 1px solid var(--border-warm);
+            border-radius: 6px;
+            margin-bottom: 18px;
+        }
+
+        select, input[type="text"] {
+            height: 38px;
+            padding: 0 10px;
+            border: 1px solid var(--border-dark);
+            border-radius: 4px;
+            background-color: #fff;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+            width: 100%;
+        }
+
+        /* Buttons */
+        .btn {
+            height: 38px;
+            padding: 0 14px;
+            font-size: 0.88rem;
+            font-weight: bold;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            user-select: none;
+            touch-action: manipulation;
+            transition: all 0.15s ease;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn-primary { background-color: var(--primary-red); color: #fff; }
+        .btn-primary:hover { background-color: #481717; }
+        .btn-gold { background-color: var(--accent-gold); color: #fff; }
+        .btn-gold:hover { background-color: #653015; }
+        .btn-success { background-color: var(--success-green); color: #fff; }
+        .btn-danger { background-color: var(--danger-red); color: #fff; }
+        .btn-outline {
+            background-color: var(--bg-card);
+            border-color: var(--border-dark);
+            color: var(--text-dark);
+        }
+        .btn-outline:hover { background-color: var(--bg-cream-dark); }
+        .btn-toggle.active {
+            background-color: var(--success-green);
+            color: white;
+            border-color: var(--success-green);
+        }
+
+        /* 4 Aspect Cards for Core Stats */
+        .aspect-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .aspect-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-warm);
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            user-select: none;
+        }
+
+        .aspect-name {
+            font-weight: bold;
+            color: var(--primary-red);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .stepper-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            gap: 6px;
+        }
+
+        .stepper-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 6px;
+            border: 1px solid var(--border-dark);
+            background: #fff;
+            color: var(--primary-red);
+            font-size: 1.4rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+            transition: background 0.15s;
+        }
+
+        .stepper-btn:hover {
+            background-color: var(--bg-cream-dark);
+        }
+
+        .stepper-btn:active {
+            background-color: var(--border-light);
+            transform: scale(0.94);
+        }
+
+        .aspect-val {
+            font-size: 1.35rem;
+            font-weight: bold;
+            color: var(--text-dark);
+            min-width: 32px;
+            text-align: center;
+        }
+
+        /* Roll Type Card */
+        .technique-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-warm);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .technique-label {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .technique-selector {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            gap: 8px;
+        }
+
+        .technique-btn {
+            height: 38px;
+            width: 38px;
+            border: 1px solid var(--border-dark);
+            background: #fff;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            color: var(--primary-red);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Checkbox Modifier Chips */
+        .modifiers-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .mod-chip {
+            background: var(--bg-card);
+            border: 1px solid var(--border-warm);
+            border-radius: 6px;
+            padding: 10px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+            touch-action: manipulation;
+            transition: all 0.15s ease;
+        }
+
+        .mod-chip input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin: 0;
+            accent-color: var(--primary-red);
+            cursor: pointer;
+            pointer-events: none; /* Let whole chip handle touch */
+        }
+
+        .mod-chip span {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #4a3f35;
+        }
+
+        .mod-chip.checked {
+            background-color: var(--success-bg);
+            border-color: var(--success-border);
+        }
+
+        .mod-chip.checked span {
+            color: var(--success-green);
+        }
+
+        /* Big Roll Action Button */
+        .roll-action-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .btn-roll-main {
+            width: 100%;
+            height: 56px;
+            font-size: 1.25rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 8px rgba(92, 29, 29, 0.2);
+            border-radius: 6px;
+        }
+
+        /* Results Display Card */
+        .results-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-warm);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            min-height: 130px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .dice-tray {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+            min-height: 28px;
+            align-items: center;
+        }
+
+        .die-token {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.82rem;
+            font-weight: bold;
+            border: 1px solid;
+            user-select: none;
+        }
+
+        .die-token.Crit { background: #fdf3e7; border-color: var(--accent-gold); color: var(--accent-gold); }
+        .die-token.Hit { background: var(--bg-cream-dark); border-color: var(--border-dark); color: var(--text-dark); }
+        .die-token.Skill { background: var(--success-bg); border-color: var(--success-border); color: var(--success-green); }
+        .die-token.Weird { background: #f4ecf8; border-color: #9c67ab; color: #5a2e68; }
+        .die-token.Blank { background: #fff; border-color: #ccc; color: #999; border-style: dashed; }
+
+        .counts-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+
+        .count-pill {
+            background: var(--bg-cream);
+            border: 1px solid var(--border-light);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.88rem;
+        }
+
+        .total-box {
+            background-color: var(--success-bg);
+            border: 1px solid var(--success-border);
+            border-radius: 6px;
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .total-label {
+            font-weight: bold;
+            color: var(--success-green);
+            font-size: 1.1rem;
+            text-transform: uppercase;
+        }
+
+        .total-score {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--success-green);
+        }
+
+        /* Preset Station */
+.preset-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .preset-slot {
+            background: var(--bg-card);
+            border: 1px solid var(--border-warm);
+            border-radius: 6px;
+            padding: 12px 6px;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+            touch-action: manipulation;
+            transition: all 0.15s ease;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .preset-slot:hover {
+            border-color: var(--accent-gold);
+            background-color: var(--bg-cream);
+        }
+
+        .preset-slot:active {
+            transform: scale(0.97);
+        }
+
+        .preset-slot.has-data {
+            font-weight: bold;
+            color: var(--accent-gold);
+            border-color: var(--border-dark);
+        }
+
+        .preset-slot.active {
+            background-color: var(--success-bg) !important;
+            border: 2px solid var(--success-green) !important;
+            color: var(--success-green) !important;
+            font-weight: bold;
+        }
+
+        /* Choice Decision Modal */
+        .modal-backdrop {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--overlay-dark);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 15px;
+        }
+
+        .modal-box {
+            background: #fff;
+            border: 1px solid var(--border-warm);
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            width: 100%;
+            max-width: 440px;
+            padding: 22px;
+            text-align: center;
+        }
+
+        .modal-title {
+            color: var(--primary-red);
+            font-size: 1.2rem;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .modal-text {
+            color: var(--text-dark);
+            font-size: 0.95rem;
+            line-height: 1.4;
+            margin-bottom: 18px;
+        }
+
+        .modal-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 768px) {
+            .character-ribbon {
+                grid-template-columns: 1fr 1fr;
+            }
+            .character-ribbon select {
+                grid-column: span 2;
+            }
+            .aspect-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .modifiers-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .preset-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .container {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>The Crystal Sphere: Dice Roller</h1>
+
+    <!-- Character Management Ribbon -->
+    <div class="character-ribbon">
+        <select id="char-dropdown" onchange="handleCharacterSelect()">
+            <option value="">-- Select Character Profile --</option>
+        </select>
+        <button class="btn btn-outline" onclick="promptNewCharacter()" title="Create Character">+ New</button>
+        <button class="btn btn-gold" onclick="saveActiveCharacter()" title="Save Character">Save</button>
+        <button class="btn btn-danger" onclick="deleteActiveCharacter()" title="Delete Character">Delete</button>
+        <button id="auto-btn" class="btn btn-toggle active" onclick="toggleAuto()" title="Toggle Calculations">Auto: ON</button>
+    </div>
+
+    <!-- Core Statistics Cards (Aspect Steppers) -->
+    <div class="aspect-grid">
+        <div class="aspect-card">
+            <span class="aspect-name">Rank</span>
+            <div class="stepper-container">
+                <button class="stepper-btn" onclick="stepStat('rank', -1)">−</button>
+                <span id="rank-val" class="aspect-val">1</span>
+                <button class="stepper-btn" onclick="stepStat('rank', 1)">+</button>
+            </div>
+        </div>
+
+        <div class="aspect-card">
+            <span class="aspect-name">Dice Count</span>
+            <div class="stepper-container">
+                <button class="stepper-btn" onclick="stepStat('dice', -1)">−</button>
+                <span id="dice-val" class="aspect-val">6</span>
+                <button class="stepper-btn" onclick="stepStat('dice', 1)">+</button>
+            </div>
+        </div>
+
+        <div class="aspect-card">
+            <span class="aspect-name">Flat Bonus</span>
+            <div class="stepper-container">
+                <button class="stepper-btn" onclick="stepStat('bonus', -1)">−</button>
+                <span id="bonus-val" class="aspect-val">0</span>
+                <button class="stepper-btn" onclick="stepStat('bonus', 1)">+</button>
+            </div>
+        </div>
+
+        <div class="aspect-card">
+            <span class="aspect-name">Crit Count</span>
+            <div class="stepper-container">
+                <button class="stepper-btn" onclick="stepStat('critCount', -1)">−</button>
+                <span id="crit-count-val" class="aspect-val">2</span>
+                <button class="stepper-btn" onclick="stepStat('critCount', 1)">+</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Roll Type / Special Attack -->
+    <div class="technique-box">
+        <span class="technique-label">Technique:</span>
+        <div class="technique-selector">
+            <button class="technique-btn" onclick="cycleAttack(-1)">◀</button>
+            <select id="attack-select" onchange="onAttackSelectChange()">
+                <option value="0">Attack / Avoid</option>
+                <option value="1">Check / Save</option>
+                <option value="2">Calculated Strike</option>
+                <option value="3">Crushing Blow</option>
+                <option value="4">Backstab</option>
+                <option value="5">Disadvantage</option>
+                <option value="6">Advantage</option>
+            </select>
+            <button class="technique-btn" onclick="cycleAttack(1)">▶</button>
+        </div>
+    </div>
+
+    <!-- Modifier Toggle Chips -->
+    <div class="modifiers-grid">
+        <div class="mod-chip" id="chip-prof" onclick="toggleChip('chk-prof', 'chip-prof')">
+            <input type="checkbox" id="chk-prof">
+            <span>Proficiency</span>
+        </div>
+        <div class="mod-chip" id="chip-extra" onclick="toggleChip('chk-extra', 'chip-extra')">
+            <input type="checkbox" id="chk-extra">
+            <span>Extra Training</span>
+        </div>
+        <div class="mod-chip" id="chip-mastery" onclick="toggleChip('chk-mastery', 'chip-mastery')">
+            <input type="checkbox" id="chk-mastery">
+            <span>Mastery</span>
+        </div>
+        <div class="mod-chip" id="chip-resilience" onclick="toggleChip('chk-resilience', 'chip-resilience')">
+            <input type="checkbox" id="chk-resilience">
+            <span>Resilience</span>
+        </div>
+    </div>
+
+    <!-- Primary Roll Button -->
+    <div class="roll-action-container">
+        <button class="btn btn-primary btn-roll-main" onclick="rollDice()">Roll Dice</button>
+    </div>
+
+<!-- Output / Results Display -->
+    <div class="results-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-size: 0.8rem; font-weight: bold; color: var(--accent-gold); text-transform: uppercase;">Dice Tray</span>
+            <button id="btn-add-crit" class="btn btn-gold" style="display: none; height: 28px; font-size: 0.8rem; padding: 0 10px;" onclick="addManualCrit()" title="Add a Crit to this roll">+1 Crit</button>
+        </div>
+        <div id="dice-tray" class="dice-tray">
+            <span style="color: var(--text-muted); font-style: italic;">Tap "Roll Dice" to test the sphere...</span>
+        </div>
+        <div id="counts-summary" class="counts-row"></div>
+        <div id="total-display-container" style="display: none;" class="total-box">
+            <span class="total-label" id="total-label-text">Final Result</span>
+            <span class="total-score" id="total-val-text">0</span>
+        </div>
+    </div>
+
+<!-- Presets Section -->
+    <h2>
+        <span>Presets</span>
+        <button id="preset-revert-btn" class="btn btn-outline" style="display: none; height: 28px; font-size: 0.8rem; padding: 0 10px; color: var(--accent-gold); border-color: var(--accent-gold);" onclick="escapePresetMode()">
+            ✕ Revert to Previous
+        </button>
+    </h2>
+
+    <div class="preset-grid" id="presets-grid">
+        <!-- Click to load (or save if empty), Double-click to rename, Right-click to clear -->
+        <div class="preset-slot" id="p-slot-1" onclick="handlePresetClick(1)" ondblclick="renamePreset(1)" oncontextmenu="handlePresetRightClick(event, 1)">Preset 1</div>
+        <div class="preset-slot" id="p-slot-2" onclick="handlePresetClick(2)" ondblclick="renamePreset(2)" oncontextmenu="handlePresetRightClick(event, 2)">Preset 2</div>
+        <div class="preset-slot" id="p-slot-3" onclick="handlePresetClick(3)" ondblclick="renamePreset(3)" oncontextmenu="handlePresetRightClick(event, 3)">Preset 3</div>
+        <div class="preset-slot" id="p-slot-4" onclick="handlePresetClick(4)" ondblclick="renamePreset(4)" oncontextmenu="handlePresetRightClick(event, 4)">Preset 4</div>
+        <div class="preset-slot" id="p-slot-5" onclick="handlePresetClick(5)" ondblclick="renamePreset(5)" oncontextmenu="handlePresetRightClick(event, 5)">Preset 5</div>
+        <div class="preset-slot" id="p-slot-6" onclick="handlePresetClick(6)" ondblclick="renamePreset(6)" oncontextmenu="handlePresetRightClick(event, 6)">Preset 6</div>
+        <div class="preset-slot" id="p-slot-7" onclick="handlePresetClick(7)" ondblclick="renamePreset(7)" oncontextmenu="handlePresetRightClick(event, 7)">Preset 7</div>
+        <div class="preset-slot" id="p-slot-8" onclick="handlePresetClick(8)" ondblclick="renamePreset(8)" oncontextmenu="handlePresetRightClick(event, 8)">Preset 8</div>
+        <div class="preset-slot" id="p-slot-9" onclick="handlePresetClick(9)" ondblclick="renamePreset(9)" oncontextmenu="handlePresetRightClick(event, 9)">Preset 9</div>
+        <div class="preset-slot" id="p-slot-10" onclick="handlePresetClick(10)" ondblclick="renamePreset(10)" oncontextmenu="handlePresetRightClick(event, 10)">Preset 10</div>
+    </div>
+
+<!-- Extra Training vs Resilience Decision Dialog -->
+<div id="choice-modal" class="modal-backdrop">
+    <div class="modal-box">
+        <h3 class="modal-title">Select Technique</h3>
+        <p class="modal-text" id="choice-modal-desc">You rolled blanks with both Extra Training and Resilience active. Which will you invoke?</p>
+        <div class="modal-actions">
+            <button class="btn btn-primary" onclick="resolveChoice(false)">Extra Training (Reroll All Blanks)</button>
+            <button class="btn btn-success" onclick="resolveChoice(true)">Resilience (Turn Blanks to Skills)</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const words = ['Crit', 'Hit', 'Hit', 'Skill', 'Skill', 'Skill', 'Weird', 'Blank'];
+    const specialAttacks = ["Attack/Avoid", "Check/Save", "Calculated Strike", "Crushing Blow", "Backstab", "Disadvantage", "Advantage"];
+
+    let attackIndex = 0;
+    let rank = 1;
+    let diceCount = 6;
+    let bonus = 0;
+    let critCount = 2;
+    let autoEnabled = true;
+
+    let pendingChoice = false;
+    let choiceCounts = null;
+    let choiceWords = [];
+
+    let lastRollState = null;
+
+    // Character State
+    let charactersData = JSON.parse(localStorage.getItem('cs_characters')) || {};
+    let activeCharacterId = localStorage.getItem('cs_active_char_id') || "";
+
+    // Presets allocation
+    let presets = {};
+    let presetNames = {
+        1:"Preset 1", 2:"Preset 2", 3:"Preset 3", 4:"Preset 4", 5:"Preset 5",
+        6:"Preset 6", 7:"Preset 7", 8:"Preset 8", 9:"Preset 9", 10:"Preset 10"
+    };
+    let activePresetId = null;
+    let manualBackupState = null;
+    let presetMode = 'load';
+
+    window.addEventListener('DOMContentLoaded', () => {
+        rebuildCharacterDropdown();
+        if (activeCharacterId && charactersData[activeCharacterId]) {
+            loadCharacterSession(activeCharacterId);
+        } else {
+            renderPresetSlots();
+        }
+    });
+
+    /* Steppers */
+    function stepStat(stat, delta) {
+        breakPresetLock();
+        if (stat === 'rank') {
+            rank = Math.max(1, Math.min(6, rank + delta));
+            document.getElementById('rank-val').innerText = rank;
+        } else if (stat === 'dice') {
+            diceCount = Math.max(1, Math.min(12, diceCount + delta));
+            document.getElementById('dice-val').innerText = diceCount;
+        } else if (stat === 'bonus') {
+            bonus = Math.max(0, Math.min(100, bonus + delta));
+            document.getElementById('bonus-val').innerText = bonus;
+        } else if (stat === 'critCount') {
+            critCount = Math.max(0, Math.min(100, critCount + delta));
+            document.getElementById('crit-count-val').innerText = critCount;
+        }
+    }
+
+    /* Attack Selection */
+    function cycleAttack(delta) {
+        breakPresetLock();
+        attackIndex = (attackIndex + delta + specialAttacks.length) % specialAttacks.length;
+        document.getElementById('attack-select').value = attackIndex;
+    }
+
+    function onAttackSelectChange() {
+        breakPresetLock();
+        attackIndex = parseInt(document.getElementById('attack-select').value, 10);
+    }
+
+    /* Toggle Chips */
+    function toggleChip(chkId, chipId) {
+        breakPresetLock();
+        const chk = document.getElementById(chkId);
+        chk.checked = !chk.checked;
+        const chip = document.getElementById(chipId);
+        if (chk.checked) {
+            chip.classList.add('checked');
+        } else {
+            chip.classList.remove('checked');
+        }
+    }
+
+    function setChipState(chkId, chipId, state) {
+        const chk = document.getElementById(chkId);
+        chk.checked = !!state;
+        const chip = document.getElementById(chipId);
+        if (chk.checked) {
+            chip.classList.add('checked');
+        } else {
+            chip.classList.remove('checked');
+        }
+    }
+
+    /* Auto Calculations Toggle */
+    function toggleAuto() {
+        autoEnabled = !autoEnabled;
+        const btn = document.getElementById('auto-btn');
+        if (autoEnabled) {
+            btn.innerText = "Auto: ON";
+            btn.classList.add('active');
+        } else {
+            btn.innerText = "Auto: OFF";
+            btn.classList.remove('active');
+        }
+    }
+
+    /* Character Management */
+    function rebuildCharacterDropdown() {
+        const dd = document.getElementById('char-dropdown');
+        dd.innerHTML = '<option value="">-- Select Character Profile --</option>';
+        for (let id in charactersData) {
+            const opt = document.createElement('option');
+            opt.value = id;
+            opt.innerText = charactersData[id].name;
+            if (id === activeCharacterId) opt.selected = true;
+            dd.appendChild(opt);
+        }
+    }
+
+    function promptNewCharacter() {
+        let name = prompt("Enter new character name:");
+        if (!name || !name.trim()) return;
+        name = name.trim();
+
+        const id = "char_" + Date.now();
+        charactersData[id] = {
+            name: name,
+            rank: 1, diceCount: 6, bonus: 0, critCount: 2, attackIndex: 0,
+            prof: false, extra: false, mastery: false, resilience: false,
+            presets: {},
+            presetNames: {
+                1:"Preset 1", 2:"Preset 2", 3:"Preset 3", 4:"Preset 4", 5:"Preset 5",
+                6:"Preset 6", 7:"Preset 7", 8:"Preset 8", 9:"Preset 9", 10:"Preset 10"
+            }
+        };
+
+        activeCharacterId = id;
+        localStorage.setItem('cs_characters', JSON.stringify(charactersData));
+        localStorage.setItem('cs_active_char_id', id);
+
+        rebuildCharacterDropdown();
+        loadCharacterSession(id);
+    }
+
+    function saveActiveCharacter() {
+        if (!activeCharacterId || !charactersData[activeCharacterId]) {
+            alert("No character profile selected to save.");
+            return;
+        }
+
+        charactersData[activeCharacterId].rank = rank;
+        charactersData[activeCharacterId].diceCount = diceCount;
+        charactersData[activeCharacterId].bonus = bonus;
+        charactersData[activeCharacterId].critCount = critCount;
+        charactersData[activeCharacterId].attackIndex = attackIndex;
+
+        charactersData[activeCharacterId].prof = document.getElementById('chk-prof').checked;
+        charactersData[activeCharacterId].extra = document.getElementById('chk-extra').checked;
+        charactersData[activeCharacterId].mastery = document.getElementById('chk-mastery').checked;
+        charactersData[activeCharacterId].resilience = document.getElementById('chk-resilience').checked;
+
+        charactersData[activeCharacterId].presets = presets;
+        charactersData[activeCharacterId].presetNames = presetNames;
+
+        localStorage.setItem('cs_characters', JSON.stringify(charactersData));
+        alert("Saved profile for " + charactersData[activeCharacterId].name);
+    }
+
+    function handleCharacterSelect() {
+        const id = document.getElementById('char-dropdown').value;
+        if (!id) return;
+        loadCharacterSession(id);
+    }
+
+    function loadCharacterSession(id) {
+        if (!charactersData[id]) return;
+        activeCharacterId = id;
+        localStorage.setItem('cs_active_char_id', id);
+
+        const data = charactersData[id];
+        document.getElementById('char-dropdown').value = id;
+
+        rank = data.rank;
+        diceCount = data.diceCount;
+        bonus = data.bonus;
+        critCount = (data.critCount !== undefined) ? data.critCount : 2;
+        attackIndex = data.attackIndex || 0;
+
+        document.getElementById('rank-val').innerText = rank;
+        document.getElementById('dice-val').innerText = diceCount;
+        document.getElementById('bonus-val').innerText = bonus;
+        document.getElementById('crit-count-val').innerText = critCount;
+        document.getElementById('attack-select').value = attackIndex;
+
+        setChipState('chk-prof', 'chip-prof', data.prof);
+        setChipState('chk-extra', 'chip-extra', data.extra);
+        setChipState('chk-mastery', 'chip-mastery', data.mastery);
+        setChipState('chk-resilience', 'chip-resilience', data.resilience);
+
+        presets = data.presets || {};
+        presetNames = data.presetNames || {
+            1:"Preset 1", 2:"Preset 2", 3:"Preset 3", 4:"Preset 4", 5:"Preset 5",
+            6:"Preset 6", 7:"Preset 7", 8:"Preset 8", 9:"Preset 9", 10:"Preset 10"
+        };
+
+        activePresetId = null;
+        manualBackupState = null;
+        renderPresetSlots();
+    }
+
+    function deleteActiveCharacter() {
+        if (!activeCharacterId || !charactersData[activeCharacterId]) {
+            alert("No character selected.");
+            return;
+        }
+
+        if (!confirm("Permanently delete " + charactersData[activeCharacterId].name + "?")) return;
+
+        delete charactersData[activeCharacterId];
+        localStorage.setItem('cs_characters', JSON.stringify(charactersData));
+
+        activeCharacterId = "";
+        localStorage.removeItem('cs_active_char_id');
+
+        rebuildCharacterDropdown();
+        presets = {};
+        for (let i = 1; i <= 10; i++) presetNames[i] = "Preset " + i;
+        renderPresetSlots();
+    }
+
+    /* Preset Management */
+    function setPresetMode(mode) {
+        presetMode = mode;
+        const modes = ['load', 'save', 'rename', 'clear'];
+        modes.forEach(m => {
+            const btn = document.getElementById('pmode-' + m);
+            if (btn) {
+                if (m === mode) btn.classList.add('active');
+                else btn.classList.remove('active');
+            }
+        });
+
+        const hint = document.getElementById('preset-mode-hint');
+        if (mode === 'load') hint.innerText = "Tap a slot to load";
+        else if (mode === 'save') hint.innerText = "Tap a slot to save current setup";
+        else if (mode === 'rename') hint.innerText = "Tap a slot to rename";
+        else if (mode === 'clear') hint.innerText = "Tap a slot to clear";
+    }
+
+// --- STREAMLINED PRESET LOGIC ---
+
+    // Single click: Load if saved, or immediately save current stats if empty
+    function handlePresetClick(num) {
+        if (!presets[num]) {
+            // Empty slot: one-click instant save
+            savePreset(num);
+        } else if (activePresetId === num) {
+            // Clicking the active preset unloads it back to manual
+            escapePresetMode();
+        } else {
+            // Load existing
+            loadPreset(num);
+        }
+    }
+
+    // Double click: Quick rename
+    function renamePreset(num) {
+        const cur = presetNames[num] || ("Preset " + num);
+        const name = prompt("Rename preset " + num + ":", cur);
+        if (name && name.trim()) {
+            presetNames[num] = name.trim();
+            if (activeCharacterId && charactersData[activeCharacterId]) {
+                charactersData[activeCharacterId].presetNames = presetNames;
+                localStorage.setItem('cs_characters', JSON.stringify(charactersData));
+            }
+            renderPresetSlots();
+        }
+    }
+
+    // Right click (or long-tap context menu): Quick clear
+    function handlePresetRightClick(event, num) {
+        event.preventDefault();
+        if (!presets[num]) return;
+        if (confirm("Clear " + presetNames[num] + "?")) {
+            clearPreset(num);
+        }
+    }
+
+ function loadPreset(num) {
+        if (!presets[num]) {
+            alert(presetNames[num] + " is empty.");
+            return;
+        }
+
+        // Tapping the currently active preset unloads it
+        if (activePresetId === num) {
+            escapePresetMode();
+            return;
+        }
+
+        // Save snapshot of current ad-hoc numbers before overriding
+        if (activePresetId === null) {
+            manualBackupState = {
+                diceCount: diceCount,
+                bonus: bonus,
+                critCount: critCount,
+                attackIndex: attackIndex,
+                prof: document.getElementById('chk-prof').checked,
+                extra: document.getElementById('chk-extra').checked,
+                mastery: document.getElementById('chk-mastery').checked,
+                resilience: document.getElementById('chk-resilience').checked
+            };
+        }
+
+        activePresetId = num;
+        const p = presets[num];
+
+        diceCount = p.diceCount;
+        bonus = p.bonus;
+        critCount = (p.critCount !== undefined) ? p.critCount : 2;
+        attackIndex = p.attackIndex || 0;
+
+        document.getElementById('dice-val').innerText = diceCount;
+        document.getElementById('bonus-val').innerText = bonus;
+        document.getElementById('crit-count-val').innerText = critCount;
+        document.getElementById('attack-select').value = attackIndex;
+
+        setChipState('chk-prof', 'chip-prof', p.prof);
+        setChipState('chk-extra', 'chip-extra', p.extra);
+        setChipState('chk-mastery', 'chip-mastery', p.mastery);
+        setChipState('chk-resilience', 'chip-resilience', p.resilience);
+
+        // Show the Revert button with the preset's name
+        const revertBtn = document.getElementById('preset-revert-btn');
+        if (revertBtn) {
+            revertBtn.style.display = 'inline-flex';
+            revertBtn.innerText = `✕ Unload "${presetNames[num]}"`;
+        }
+
+        renderPresetSlots();
+    }
+
+    function escapePresetMode() {
+        if (manualBackupState) {
+            const b = manualBackupState;
+            diceCount = b.diceCount;
+            bonus = b.bonus;
+            critCount = b.critCount;
+            attackIndex = b.attackIndex;
+
+            document.getElementById('dice-val').innerText = diceCount;
+            document.getElementById('bonus-val').innerText = bonus;
+            document.getElementById('crit-count-val').innerText = critCount;
+            document.getElementById('attack-select').value = attackIndex;
+
+            setChipState('chk-prof', 'chip-prof', b.prof);
+            setChipState('chk-extra', 'chip-extra', b.extra);
+            setChipState('chk-mastery', 'chip-mastery', b.mastery);
+            setChipState('chk-resilience', 'chip-resilience', b.resilience);
+        }
+
+        activePresetId = null;
+        manualBackupState = null;
+
+        // Hide revert button
+        const revertBtn = document.getElementById('preset-revert-btn');
+        if (revertBtn) revertBtn.style.display = 'none';
+
+        renderPresetSlots();
+    }
+
+    function breakPresetLock() {
+        if (activePresetId !== null) {
+            activePresetId = null;
+            manualBackupState = null;
+
+            const revertBtn = document.getElementById('preset-revert-btn');
+            if (revertBtn) revertBtn.style.display = 'none';
+
+            renderPresetSlots();
+        }
+    }
+
+    function savePreset(num) {
+        presets[num] = {
+            diceCount: diceCount,
+            bonus: bonus,
+            critCount: critCount,
+            attackIndex: attackIndex,
+            prof: document.getElementById('chk-prof').checked,
+            extra: document.getElementById('chk-extra').checked,
+            mastery: document.getElementById('chk-mastery').checked,
+            resilience: document.getElementById('chk-resilience').checked
+        };
+
+        if (activeCharacterId && charactersData[activeCharacterId]) {
+            charactersData[activeCharacterId].presets = presets;
+            localStorage.setItem('cs_characters', JSON.stringify(charactersData));
+        }
+        renderPresetSlots();
+    }
+
+    function renamePreset(num) {
+        const cur = presetNames[num] || ("Preset " + num);
+        const name = prompt("Rename preset:", cur);
+        if (name && name.trim()) {
+            presetNames[num] = name.trim();
+            if (activeCharacterId && charactersData[activeCharacterId]) {
+                charactersData[activeCharacterId].presetNames = presetNames;
+                localStorage.setItem('cs_characters', JSON.stringify(charactersData));
+            }
+            renderPresetSlots();
+        }
+    }
+
+    function clearPreset(num) {
+        if (!presets[num]) return;
+        delete presets[num];
+        presetNames[num] = "Preset " + num;
+
+        if (activePresetId === num) {
+            activePresetId = null;
+            manualBackupState = null;
+        }
+
+        if (activeCharacterId && charactersData[activeCharacterId]) {
+            charactersData[activeCharacterId].presets = presets;
+            charactersData[activeCharacterId].presetNames = presetNames;
+            localStorage.setItem('cs_characters', JSON.stringify(charactersData));
+        }
+        renderPresetSlots();
+    }
+
+
+    function renderPresetSlots() {
+        for (let i = 1; i <= 10; i++) {
+            const slot = document.getElementById('p-slot-' + i);
+            if (!slot) continue;
+            slot.innerText = presetNames[i] || ("Preset " + i);
+
+            slot.classList.remove('active', 'has-data');
+            if (activePresetId === i) slot.classList.add('active');
+            else if (presets[i]) slot.classList.add('has-data');
+        }
+    }
+
+    /* Core Dice Rolling Mechanics */
+    function rollDice() {
+        let counts = { 'Crit': 0, 'Hit': 0, 'Skill': 0, 'Weird': 0, 'Blank': 0 };
+        let chosenWords = [];
+
+        for (let i = 0; i < diceCount; i++) {
+            const array = new Uint32Array(1);
+            window.crypto.getRandomValues(array);
+            const randomWord = words[array[0] % words.length];
+            chosenWords.push(randomWord);
+            if (counts.hasOwnProperty(randomWord)) counts[randomWord]++;
+        }
+
+        if (!autoEnabled) {
+            renderDiceTokens(chosenWords);
+            renderCountsSummary(counts);
+            document.getElementById('total-display-container').style.display = 'none';
+            return;
+        }
+
+        const hasExtraTraining = document.getElementById('chk-extra').checked;
+        const hasResilience = document.getElementById('chk-resilience').checked;
+
+        // Choice Conflict: Both active and blanks rolled
+        if (hasExtraTraining && hasResilience && counts['Blank'] > 0) {
+            choiceCounts = counts;
+            choiceWords = chosenWords;
+            document.getElementById('choice-modal-desc').innerText = 
+                `Rolled ${counts['Blank']} blank(s) and ${counts['Skill']} skill(s). Choose your resolution:`;
+            document.getElementById('choice-modal').style.display = 'flex';
+            return;
+        }
+
+        executePipeline(counts, chosenWords);
+    }
+
+    function resolveChoice(chooseResilience) {
+        document.getElementById('choice-modal').style.display = 'none';
+        let counts = choiceCounts;
+        let chosenWords = choiceWords;
+
+        if (chooseResilience) {
+            counts['Skill'] += counts['Blank'];
+            counts['Blank'] = 0;
+            chosenWords = chosenWords.map(w => w === 'Blank' ? 'Skill (Resilience)' : w);
+        } else {
+            const initialBlanks = counts['Blank'];
+            counts['Blank'] = 0;
+            chosenWords = chosenWords.filter(w => w !== 'Blank');
+
+            for (let j = 0; j < initialBlanks; j++) {
+                const array = new Uint32Array(1);
+                window.crypto.getRandomValues(array);
+                const randomWord = words[array[0] % words.length];
+                if (counts.hasOwnProperty(randomWord)) counts[randomWord]++;
+                chosenWords.push(randomWord + " (Reroll)");
+            }
+        }
+
+        executePipeline(counts, chosenWords, true);
+    }
+
+    function executePipeline(counts, chosenWords, chosenAlternative = false) {
+        const isProficient = document.getElementById('chk-prof').checked;
+        const hasExtraTraining = document.getElementById('chk-extra').checked;
+        const hasMastery = document.getElementById('chk-mastery').checked;
+        const hasResilience = document.getElementById('chk-resilience').checked;
+
+        if (!chosenAlternative) {
+            if (hasResilience && counts['Blank'] > 0) {
+                counts['Skill'] += counts['Blank'];
+                counts['Blank'] = 0;
+                chosenWords = chosenWords.map(w => w === 'Blank' ? 'Skill (Resilience)' : w);
+            }
+
+            if (hasMastery) {
+                counts['Crit']++;
+                chosenWords.push("Crit (Mastery)");
+            }
+
+            if (hasExtraTraining && counts['Blank'] > 0) {
+                const initialBlanks = counts['Blank'];
+                counts['Blank'] = 0;
+                chosenWords = chosenWords.filter(w => w !== 'Blank');
+
+                for (let j = 0; j < initialBlanks; j++) {
+                    const array = new Uint32Array(1);
+                    window.crypto.getRandomValues(array);
+                    const randomWord = words[array[0] % words.length];
+                    if (counts.hasOwnProperty(randomWord)) counts[randomWord]++;
+                    chosenWords.push(randomWord + " (Reroll)");
+                }
+            }
+        } else if (hasMastery) {
+            counts['Crit']++;
+            chosenWords.push("Crit (Mastery)");
+        }
+
+        const activeAttack = specialAttacks[attackIndex];
+
+        if (activeAttack === "Advantage") {
+            counts['Crit'] += counts['Hit'];
+            counts['Hit'] = 0;
+            if (isProficient) {
+                let convert = Math.min(counts['Skill'], rank);
+                counts['Hit'] += convert;
+                counts['Skill'] -= convert;
+            }
+        } else if (activeAttack === "Disadvantage") {
+            counts['Blank'] += counts['Hit'];
+            counts['Hit'] = 0;
+            if (isProficient) {
+                let convert = Math.min(counts['Skill'], rank);
+                counts['Hit'] += convert;
+                counts['Skill'] -= convert;
+            }
+        } else if (activeAttack === "Backstab") {
+            if (isProficient) {
+                let convert = Math.min(counts['Skill'], rank);
+                counts['Crit'] += convert;
+                counts['Skill'] -= convert;
+            }
+        } else if (activeAttack === "Calculated Strike") {
+            counts['Blank'] += counts['Hit'];
+            counts['Hit'] = 0;
+            if (isProficient) {
+                let convert = Math.min(counts['Skill'], rank);
+                counts['Crit'] += convert;
+                counts['Skill'] -= convert;
+            }
+        } else if (activeAttack === "Crushing Blow") {
+            counts['Blank'] += counts['Skill'];
+            counts['Skill'] = 0;
+            let convert = Math.min(counts['Hit'], rank);
+            counts['Crit'] += convert;
+            counts['Hit'] -= convert;
+        } else {
+            if (isProficient) {
+                let convert = Math.min(counts['Skill'], rank);
+                counts['Hit'] += convert;
+                counts['Skill'] -= convert;
+            }
+        }
+
+        // Calculation Formula
+        let basePoints = (counts['Crit'] * critCount) + (counts['Hit'] * 1);
+        let totalAmount = basePoints;
+
+        if (counts['Crit'] > 0 && activeAttack !== "Check/Save") {
+            totalAmount = totalAmount * counts['Crit'];
+        }
+
+        let damageAmount = totalAmount + bonus;
+
+        renderDiceTokens(chosenWords);
+        renderCountsSummary(counts);
+
+        const totalContainer = document.getElementById('total-display-container');
+        const totalLabel = document.getElementById('total-label-text');
+        const totalVal = document.getElementById('total-val-text');
+
+        totalContainer.style.display = 'flex';
+        totalLabel.innerText = (activeAttack === "Attack/Avoid" ? "Total Score" : activeAttack + " Total");
+        totalVal.innerText = damageAmount;
+
+// Save roll snapshot and reveal the +1 Crit button
+        lastRollState = { counts: counts, chosenWords: chosenWords, activeAttack: activeAttack };
+        document.getElementById('btn-add-crit').style.display = 'inline-flex';
+    
+}
+
+function addManualCrit() {
+        if (!lastRollState) return;
+
+        // Add 1 Crit to the active roll counts and tray tokens
+        lastRollState.counts['Crit']++;
+        lastRollState.chosenWords.push('Crit (Manual)');
+
+        renderDiceTokens(lastRollState.chosenWords);
+        renderCountsSummary(lastRollState.counts);
+
+        if (autoEnabled) {
+            const activeAttack = lastRollState.activeAttack;
+            let basePoints = (lastRollState.counts['Crit'] * critCount) + (lastRollState.counts['Hit'] * 1);
+            let totalAmount = basePoints;
+
+            // Recalculate Crit multiplication
+            if (lastRollState.counts['Crit'] > 0 && activeAttack !== "Check/Save") {
+                totalAmount = totalAmount * lastRollState.counts['Crit'];
+            }
+
+            let damageAmount = totalAmount + bonus;
+
+            const totalContainer = document.getElementById('total-display-container');
+            const totalLabel = document.getElementById('total-label-text');
+            const totalVal = document.getElementById('total-val-text');
+
+            totalContainer.style.display = 'flex';
+            totalLabel.innerText = (activeAttack === "Attack/Avoid" ? "Total Score" : activeAttack + " Total");
+            totalVal.innerText = damageAmount;
+        }
+    }
+
+    function renderDiceTokens(wordsArray) {
+        const tray = document.getElementById('dice-tray');
+        tray.innerHTML = '';
+        wordsArray.forEach(word => {
+            const span = document.createElement('span');
+            span.className = 'die-token ' + word.split(' ')[0];
+            span.innerText = word;
+            tray.appendChild(span);
+        });
+    }
+
+    function renderCountsSummary(counts) {
+        const summary = document.getElementById('counts-summary');
+        summary.innerHTML = `
+            <span class="count-pill"><strong>Crits:</strong> ${counts['Crit']}</span>
+            <span class="count-pill"><strong>Hits:</strong> ${counts['Hit']}</span>
+            <span class="count-pill"><strong>Skills:</strong> ${counts['Skill']}</span>
+            <span class="count-pill"><strong>Weirds:</strong> ${counts['Weird']}</span>
+            <span class="count-pill"><strong>Blanks:</strong> ${counts['Blank']}</span>
+        `;
+    }
+</script>
+
+</body>
+</html>
