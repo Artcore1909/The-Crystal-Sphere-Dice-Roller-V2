@@ -23,7 +23,10 @@
             --success-bg: #edf7f4;
             --success-border: #c2e2d9;
             --danger-red: #b82c2c;
-            --overlay-dark: rgba(44, 37, 30, 0.6);
+            --overlay-dark: rgba(44, 37, 30, 0.65);
+            --wyrd-purple: #5a2e68;
+            --wyrd-bg: #f4ecf8;
+            --wyrd-border: #9c67ab;
         }
 
         * {
@@ -36,7 +39,7 @@
             background-color: var(--bg-cream-dark);
             color: var(--text-dark);
             margin: 0;
-            padding: 20px 10px;
+            padding: 24px 12px;
             display: flex;
             justify-content: center;
         }
@@ -45,9 +48,9 @@
             width: 100%;
             max-width: 950px;
             background: #fff;
-            padding: 25px 30px;
+            padding: 26px 32px;
             border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
             border: 1px solid var(--border-warm);
         }
 
@@ -57,7 +60,7 @@
             border-bottom: 2px solid var(--primary-red);
             padding-bottom: 8px;
             margin-top: 0;
-            font-size: 1.8rem;
+            font-size: 1.85rem;
             letter-spacing: 0.5px;
         }
 
@@ -65,7 +68,7 @@
             color: var(--accent-gold);
             border-bottom: 1px solid var(--border-light);
             padding-bottom: 5px;
-            margin-top: 20px;
+            margin-top: 24px;
             margin-bottom: 12px;
             font-size: 1.2rem;
             display: flex;
@@ -73,10 +76,10 @@
             align-items: center;
         }
 
-        /* Top Bar: Character & System Controls */
+        /* Character Navigation Ribbon */
         .character-ribbon {
             display: grid;
-            grid-template-columns: 1fr auto auto auto auto;
+            grid-template-columns: 1fr auto auto auto;
             gap: 8px;
             align-items: center;
             background-color: var(--bg-cream);
@@ -131,18 +134,13 @@
             color: var(--text-dark);
         }
         .btn-outline:hover { background-color: var(--bg-cream-dark); }
-        .btn-toggle.active {
-            background-color: var(--success-green);
-            color: white;
-            border-color: var(--success-green);
-        }
 
-        /* 4 Aspect Cards for Core Stats */
+        /* Core Stat Cards (Aspect Steppers & Inputs) */
         .aspect-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 12px;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         .aspect-card {
@@ -170,19 +168,19 @@
         .stepper-container {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             width: 100%;
             gap: 6px;
         }
 
         .stepper-btn {
-            width: 42px;
-            height: 42px;
+            width: 38px;
+            height: 38px;
             border-radius: 6px;
             border: 1px solid var(--border-dark);
             background: #fff;
             color: var(--primary-red);
-            font-size: 1.4rem;
+            font-size: 1.35rem;
             font-weight: bold;
             cursor: pointer;
             display: flex;
@@ -190,122 +188,51 @@
             justify-content: center;
             touch-action: manipulation;
             transition: background 0.15s;
+            flex-shrink: 0;
         }
 
-        .stepper-btn:hover {
-            background-color: var(--bg-cream-dark);
-        }
+        .stepper-btn:hover { background-color: var(--bg-cream-dark); }
+        .stepper-btn:active { background-color: var(--border-light); transform: scale(0.94); }
 
-        .stepper-btn:active {
-            background-color: var(--border-light);
-            transform: scale(0.94);
-        }
-
-        .aspect-val {
+        .aspect-val-input {
+            width: 58px;
+            height: 38px;
+            border: 1px solid var(--border-dark);
+            border-radius: 6px;
+            background: #fff;
             font-size: 1.35rem;
             font-weight: bold;
             color: var(--text-dark);
-            min-width: 32px;
             text-align: center;
+            padding: 0;
+            margin: 0;
+            font-family: inherit;
+            -moz-appearance: textfield;
+            transition: border-color 0.15s, box-shadow 0.15s;
         }
 
-        /* Roll Type Card */
-        .technique-box {
-            background: var(--bg-card);
-            border: 1px solid var(--border-warm);
-            border-radius: 8px;
-            padding: 12px 16px;
-            margin-bottom: 16px;
+        .aspect-val-input::-webkit-outer-spin-button,
+        .aspect-val-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .aspect-val-input:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 2px rgba(125, 60, 27, 0.2);
+        }
+
+        /* Roll Action Bar */
+        .roll-action-container {
             display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .technique-label {
-            font-size: 0.85rem;
-            font-weight: bold;
-            color: var(--accent-gold);
-            text-transform: uppercase;
-            white-space: nowrap;
-        }
-
-        .technique-selector {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            gap: 8px;
-        }
-
-        .technique-btn {
-            height: 38px;
-            width: 38px;
-            border: 1px solid var(--border-dark);
-            background: #fff;
-            border-radius: 4px;
-            font-size: 1.1rem;
-            color: var(--primary-red);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Checkbox Modifier Chips */
-        .modifiers-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
             gap: 10px;
             margin-bottom: 20px;
         }
 
-        .mod-chip {
-            background: var(--bg-card);
-            border: 1px solid var(--border-warm);
-            border-radius: 6px;
-            padding: 10px 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            cursor: pointer;
-            user-select: none;
-            touch-action: manipulation;
-            transition: all 0.15s ease;
-        }
-
-        .mod-chip input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            margin: 0;
-            accent-color: var(--primary-red);
-            cursor: pointer;
-            pointer-events: none; /* Let whole chip handle touch */
-        }
-
-        .mod-chip span {
-            font-size: 0.85rem;
-            font-weight: bold;
-            color: #4a3f35;
-        }
-
-        .mod-chip.checked {
-            background-color: var(--success-bg);
-            border-color: var(--success-border);
-        }
-
-        .mod-chip.checked span {
-            color: var(--success-green);
-        }
-
-        /* Big Roll Action Button */
-        .roll-action-container {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
         .btn-roll-main {
-            width: 100%;
-            height: 56px;
+            flex: 1;
+            height: 54px;
             font-size: 1.25rem;
             letter-spacing: 1px;
             text-transform: uppercase;
@@ -313,60 +240,222 @@
             border-radius: 6px;
         }
 
-        /* Results Display Card */
+        /* Results & Interactive Dice Card */
         .results-card {
             background: var(--bg-card);
             border: 1px solid var(--border-warm);
             border-radius: 8px;
             padding: 16px 20px;
-            margin-bottom: 20px;
-            min-height: 130px;
+            margin-bottom: 22px;
+            min-height: 140px;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
 
+        .results-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .results-card-title {
+            font-size: 0.82rem;
+            font-weight: bold;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
         .dice-tray {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 8px;
             margin-bottom: 12px;
-            min-height: 28px;
+            min-height: 36px;
             align-items: center;
         }
 
         .die-token {
-            padding: 4px 8px;
+            padding: 6px 10px;
             border-radius: 4px;
-            font-size: 0.82rem;
+            font-size: 0.88rem;
             font-weight: bold;
             border: 1px solid;
+            cursor: pointer;
             user-select: none;
+            touch-action: manipulation;
+            transition: transform 0.12s ease, box-shadow 0.15s ease;
         }
 
+        .die-token:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+        }
+
+        .die-token:active { transform: scale(0.94); }
+
+        .die-token.selected-die {
+            outline: 2px solid var(--primary-red);
+            box-shadow: 0 0 0 3px rgba(92, 29, 29, 0.25);
+        }
+
+        .lock-icon {
+            font-size: 0.72rem;
+            margin-left: 4px;
+            vertical-align: middle;
+            opacity: 0.8;
+        }
+
+        /* Die Token Themes */
         .die-token.Crit { background: #fdf3e7; border-color: var(--accent-gold); color: var(--accent-gold); }
         .die-token.Hit { background: var(--bg-cream-dark); border-color: var(--border-dark); color: var(--text-dark); }
         .die-token.Skill { background: var(--success-bg); border-color: var(--success-border); color: var(--success-green); }
-        .die-token.Weird { background: #f4ecf8; border-color: #9c67ab; color: #5a2e68; }
+        .die-token.Wyrd, .die-token.Weird { background: var(--wyrd-bg); border-color: var(--wyrd-border); color: var(--wyrd-purple); }
         .die-token.Blank { background: #fff; border-color: #ccc; color: #999; border-style: dashed; }
+        .die-token.plus-1x { background: #fcf4e8; border-color: var(--accent-gold); color: var(--accent-gold); }
+        .die-token.minus-1x { background: #fdf0f0; border-color: var(--danger-red); color: var(--danger-red); }
 
-        .counts-row {
+        /* Add Die Toolbar */
+        .add-dice-toolbar {
             display: flex;
+            align-items: center;
+            gap: 6px;
             flex-wrap: wrap;
-            gap: 12px;
-            font-size: 0.95rem;
-            color: var(--text-dark);
-            margin-bottom: 12px;
+            margin-bottom: 14px;
+            padding-top: 8px;
+            border-top: 1px dashed var(--border-light);
         }
 
-        .count-pill {
-            background: var(--bg-cream);
-            border: 1px solid var(--border-light);
-            padding: 4px 10px;
+        .add-dice-label {
+            font-size: 0.78rem;
+            font-weight: bold;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-right: 4px;
+        }
+
+        .btn-add-die {
+            height: 28px;
+            padding: 0 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
             border-radius: 4px;
-            font-size: 0.88rem;
+            border: 1px solid var(--border-dark);
+            background: #fff;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            user-select: none;
+            touch-action: manipulation;
+            transition: all 0.12s ease;
         }
 
+        .btn-add-die:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-add-die:active { transform: scale(0.95); }
+
+        .btn-add-die.add-Crit { background: #fdf3e7; border-color: var(--accent-gold); color: var(--accent-gold); }
+        .btn-add-die.add-Hit { background: var(--bg-cream-dark); border-color: var(--border-dark); color: var(--text-dark); }
+        .btn-add-die.add-Skill { background: var(--success-bg); border-color: var(--success-border); color: var(--success-green); }
+        .btn-add-die.add-Wyrd { background: var(--wyrd-bg); border-color: var(--wyrd-border); color: var(--wyrd-purple); }
+        .btn-add-die.add-Blank { background: #fff; border-color: #ccc; color: #888; border-style: dashed; }
+        .btn-add-die.add-plus-1x { background: #fcf4e8; border-color: var(--accent-gold); color: var(--accent-gold); }
+        .btn-add-die.add-minus-1x { background: #fdf0f0; border-color: var(--danger-red); color: var(--danger-red); }
+
+        .btn-add-die.add-adv {
+            background: #fdf3e7;
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+        }
+
+        .btn-add-die.add-disadv {
+            background: #fdf0f0;
+            border-color: var(--danger-red);
+            color: var(--danger-red);
+        }
+
+        /* Die Action Bar */
+        .die-action-bar {
+            display: none;
+            background: var(--bg-cream);
+            border: 1px solid var(--border-dark);
+            border-radius: 6px;
+            padding: 10px 12px;
+            margin-bottom: 12px;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .die-action-label {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--accent-gold);
+        }
+
+        .die-action-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        /* Wyrd Manifestation Active Text Banner */
+        .wyrd-banner {
+            display: none;
+            background: #faf2fd;
+            border: 1px solid var(--wyrd-border);
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-bottom: 12px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .wyrd-banner-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .wyrd-banner-tag {
+            font-size: 0.72rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: var(--wyrd-purple);
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        .wyrd-banner-text {
+            font-size: 0.92rem;
+            font-weight: bold;
+            color: var(--wyrd-purple);
+        }
+
+        .wyrd-banner-clear {
+            background: transparent;
+            border: none;
+            color: var(--wyrd-border);
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0 4px;
+            line-height: 1;
+        }
+        .wyrd-banner-clear:hover { color: var(--wyrd-purple); }
+
+        /* Total Score Box */
         .total-box {
             background-color: var(--success-bg);
             border: 1px solid var(--success-border);
@@ -380,22 +469,22 @@
         .total-label {
             font-weight: bold;
             color: var(--success-green);
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             text-transform: uppercase;
         }
 
         .total-score {
-            font-size: 1.8rem;
+            font-size: 1.85rem;
             font-weight: bold;
             color: var(--success-green);
         }
 
-        /* Preset Station */
-.preset-grid {
+        /* Presets Grid */
+        .preset-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 8px;
-            margin-top: 10px;
+            margin-top: 8px;
         }
 
         .preset-slot {
@@ -411,7 +500,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             color: var(--text-muted);
         }
 
@@ -420,9 +509,7 @@
             background-color: var(--bg-cream);
         }
 
-        .preset-slot:active {
-            transform: scale(0.97);
-        }
+        .preset-slot:active { transform: scale(0.96); }
 
         .preset-slot.has-data {
             font-weight: bold;
@@ -437,7 +524,7 @@
             font-weight: bold;
         }
 
-        /* Choice Decision Modal */
+        /* Wyrd Modal & Table */
         .modal-backdrop {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -446,60 +533,168 @@
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            padding: 15px;
+            padding: 16px;
         }
 
-        .modal-box {
+        .modal-box-wyrd {
             background: #fff;
             border: 1px solid var(--border-warm);
             border-radius: 8px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.25);
             width: 100%;
-            max-width: 440px;
+            max-width: 780px;
+            max-height: 90vh;
+            overflow-y: auto;
             padding: 22px;
             text-align: center;
         }
 
         .modal-title {
-            color: var(--primary-red);
-            font-size: 1.2rem;
+            color: var(--wyrd-purple);
+            font-size: 1.35rem;
             margin-top: 0;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
+            font-weight: bold;
         }
 
-        .modal-text {
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 10px;
+            margin-bottom: 16px;
+        }
+
+        .wyrd-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.86rem;
+            border: 2px solid #333;
+            background: #fff;
+        }
+
+        .wyrd-table th, .wyrd-table td {
+            border: 1px solid #333;
+            padding: 8px 5px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .wyrd-th-title {
+            background-color: #f7f3f9;
+            color: #2c251e;
+            font-size: 1rem;
+            font-weight: bold;
+            padding: 9px !important;
+            letter-spacing: 0.5px;
+        }
+
+        .wyrd-th-cost {
+            background-color: #bfbfbf;
+            font-weight: bold;
+            width: 76px;
+        }
+
+        .wyrd-th-col {
+            background-color: #f0f0f0;
+            font-weight: bold;
+            min-width: 88px;
+            font-size: 0.9rem;
+        }
+
+        .wyrd-th-col.col-highlight {
+            background-color: #e6d3ec !important;
+            color: var(--wyrd-purple);
+        }
+
+        .wyrd-td-luck {
+            background-color: #bfbfbf;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .wyrd-cell-btn {
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            user-select: none;
+            touch-action: manipulation;
+            font-weight: 600;
+            padding: 8px 4px;
+        }
+
+        .wyrd-cell-btn:hover:not(.disabled) {
+            background-color: #fdf3e7;
+            transform: scale(1.02);
+            box-shadow: inset 0 0 0 2px var(--wyrd-border);
+        }
+
+        .wyrd-cell-btn:active:not(.disabled) {
+            transform: scale(0.96);
+        }
+
+        .wyrd-cell-btn.disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            background-color: #f5f5f5 !important;
+            box-shadow: none !important;
+            transform: none !important;
+        }
+
+        .wyrd-cell-empty {
+            background-color: #e2e2e2;
+            cursor: not-allowed;
+        }
+
+        /* Badges inside Table */
+        .badge-skill {
+            display: inline-block;
+            background: var(--success-bg);
+            border: 1px solid var(--success-border);
+            color: var(--success-green);
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        .badge-hit {
+            display: inline-block;
+            background: var(--bg-cream-dark);
+            border: 1px solid var(--border-dark);
             color: var(--text-dark);
-            font-size: 0.95rem;
-            line-height: 1.4;
-            margin-bottom: 18px;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.8rem;
         }
 
-        .modal-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        .badge-crit {
+            display: inline-block;
+            background: #fdf3e7;
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.8rem;
         }
 
-        /* Responsive Breakpoints */
+        .badge-text-effect {
+            color: #2c251e;
+            font-weight: bold;
+            line-height: 1.22;
+            font-size: 0.82rem;
+            display: inline-block;
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .character-ribbon {
-                grid-template-columns: 1fr 1fr;
-            }
-            .character-ribbon select {
-                grid-column: span 2;
-            }
-            .aspect-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .modifiers-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .preset-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .container {
-                padding: 16px;
-            }
+            .character-ribbon { grid-template-columns: 1fr 1fr; }
+            .character-ribbon select { grid-column: span 2; }
+            .aspect-grid { grid-template-columns: 1fr; }
+            .preset-grid { grid-template-columns: repeat(2, 1fr); }
+            .container { padding: 16px; }
+            .modal-box-wyrd { padding: 14px; }
         }
     </style>
 </head>
@@ -508,33 +703,23 @@
 <div class="container">
     <h1>The Crystal Sphere: Dice Roller</h1>
 
-    <!-- Character Management Ribbon -->
+    <!-- Character Ribbon -->
     <div class="character-ribbon">
         <select id="char-dropdown" onchange="handleCharacterSelect()">
             <option value="">-- Select Character Profile --</option>
         </select>
-        <button class="btn btn-outline" onclick="promptNewCharacter()" title="Create Character">+ New</button>
-        <button class="btn btn-gold" onclick="saveActiveCharacter()" title="Save Character">Save</button>
-        <button class="btn btn-danger" onclick="deleteActiveCharacter()" title="Delete Character">Delete</button>
-        <button id="auto-btn" class="btn btn-toggle active" onclick="toggleAuto()" title="Toggle Calculations">Auto: ON</button>
+        <button class="btn btn-outline" onclick="promptNewCharacter()">+ New</button>
+        <button class="btn btn-gold" onclick="saveActiveCharacter()">Save</button>
+        <button class="btn btn-danger" onclick="deleteActiveCharacter()">Delete</button>
     </div>
 
-    <!-- Core Statistics Cards (Aspect Steppers) -->
+    <!-- Core Aspect Stat Cards (Typable Inputs) -->
     <div class="aspect-grid">
-        <div class="aspect-card">
-            <span class="aspect-name">Rank</span>
-            <div class="stepper-container">
-                <button class="stepper-btn" onclick="stepStat('rank', -1)">−</button>
-                <span id="rank-val" class="aspect-val">1</span>
-                <button class="stepper-btn" onclick="stepStat('rank', 1)">+</button>
-            </div>
-        </div>
-
         <div class="aspect-card">
             <span class="aspect-name">Dice Count</span>
             <div class="stepper-container">
                 <button class="stepper-btn" onclick="stepStat('dice', -1)">−</button>
-                <span id="dice-val" class="aspect-val">6</span>
+                <input type="number" id="dice-val" class="aspect-val-input" value="6" min="1" max="100" oninput="onStatType('dice')" onblur="onStatBlur('dice')" onfocus="this.select()">
                 <button class="stepper-btn" onclick="stepStat('dice', 1)">+</button>
             </div>
         </div>
@@ -543,7 +728,7 @@
             <span class="aspect-name">Flat Bonus</span>
             <div class="stepper-container">
                 <button class="stepper-btn" onclick="stepStat('bonus', -1)">−</button>
-                <span id="bonus-val" class="aspect-val">0</span>
+                <input type="number" id="bonus-val" class="aspect-val-input" value="0" min="0" oninput="onStatType('bonus')" onblur="onStatBlur('bonus')" onfocus="this.select()">
                 <button class="stepper-btn" onclick="stepStat('bonus', 1)">+</button>
             </div>
         </div>
@@ -552,81 +737,86 @@
             <span class="aspect-name">Crit Count</span>
             <div class="stepper-container">
                 <button class="stepper-btn" onclick="stepStat('critCount', -1)">−</button>
-                <span id="crit-count-val" class="aspect-val">2</span>
+                <input type="number" id="crit-count-val" class="aspect-val-input" value="2" min="0" oninput="onStatType('critCount')" onblur="onStatBlur('critCount')" onfocus="this.select()">
                 <button class="stepper-btn" onclick="stepStat('critCount', 1)">+</button>
             </div>
         </div>
     </div>
 
-    <!-- Roll Type / Special Attack -->
-    <div class="technique-box">
-        <span class="technique-label">Technique:</span>
-        <div class="technique-selector">
-            <button class="technique-btn" onclick="cycleAttack(-1)">◀</button>
-            <select id="attack-select" onchange="onAttackSelectChange()">
-                <option value="0">Attack / Avoid</option>
-                <option value="1">Check / Save</option>
-                <option value="2">Calculated Strike</option>
-                <option value="3">Crushing Blow</option>
-                <option value="4">Backstab</option>
-                <option value="5">Disadvantage</option>
-                <option value="6">Advantage</option>
-            </select>
-            <button class="technique-btn" onclick="cycleAttack(1)">▶</button>
-        </div>
-    </div>
-
-    <!-- Modifier Toggle Chips -->
-    <div class="modifiers-grid">
-        <div class="mod-chip" id="chip-prof" onclick="toggleChip('chk-prof', 'chip-prof')">
-            <input type="checkbox" id="chk-prof">
-            <span>Proficiency</span>
-        </div>
-        <div class="mod-chip" id="chip-extra" onclick="toggleChip('chk-extra', 'chip-extra')">
-            <input type="checkbox" id="chk-extra">
-            <span>Extra Training</span>
-        </div>
-        <div class="mod-chip" id="chip-mastery" onclick="toggleChip('chk-mastery', 'chip-mastery')">
-            <input type="checkbox" id="chk-mastery">
-            <span>Mastery</span>
-        </div>
-        <div class="mod-chip" id="chip-resilience" onclick="toggleChip('chk-resilience', 'chip-resilience')">
-            <input type="checkbox" id="chk-resilience">
-            <span>Resilience</span>
-        </div>
-    </div>
-
-    <!-- Primary Roll Button -->
+    <!-- Roll Action -->
     <div class="roll-action-container">
         <button class="btn btn-primary btn-roll-main" onclick="rollDice()">Roll Dice</button>
     </div>
 
-<!-- Output / Results Display -->
+    <!-- Results Card -->
     <div class="results-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <span style="font-size: 0.8rem; font-weight: bold; color: var(--accent-gold); text-transform: uppercase;">Dice Tray</span>
-            <button id="btn-add-crit" class="btn btn-gold" style="display: none; height: 28px; font-size: 0.8rem; padding: 0 10px;" onclick="addManualCrit()" title="Add a Crit to this roll">+1 Crit</button>
+        <div class="results-card-header">
+            <span class="results-card-title">Dice Tray</span>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <span style="font-size: 0.78rem; color: var(--text-muted); font-style: italic;">Tap any die to modify</span>
+                <button class="btn btn-outline" style="height: 24px; padding: 0 8px; font-size: 0.72rem; color: var(--wyrd-purple); border-color: var(--wyrd-border);" onclick="openWyrdModal()">Wyrd Chart</button>
+            </div>
         </div>
+
         <div id="dice-tray" class="dice-tray">
             <span style="color: var(--text-muted); font-style: italic;">Tap "Roll Dice" to test the sphere...</span>
         </div>
-        <div id="counts-summary" class="counts-row"></div>
+
+<!-- Add Result Toolbar -->
+        <div class="add-dice-toolbar">
+            <span class="add-dice-label">Additional Modifications:</span>
+            <div class="add-dice-buttons">
+                <button class="btn-add-die add-Crit" onclick="addManualDie('Crit')">+ Crit</button>
+                <button class="btn-add-die add-Hit" onclick="addManualDie('Hit')">+ Hit</button>
+                <button class="btn-add-die add-Skill" onclick="addManualDie('Skill')">+ Skill</button>
+                <button class="btn-add-die add-Wyrd" onclick="addManualDie('Wyrd')">+ Wyrd</button>
+                <button class="btn-add-die add-Blank" onclick="addManualDie('Blank')">+ Blank</button>
+                <span class="toolbar-divider">|</span>
+                <button class="btn-add-die add-plus-1x" onclick="addManualDie('+1x')">+1x</button>
+                <button class="btn-add-die add-minus-1x" onclick="addManualDie('-1x')">-1x</button>
+                <span class="toolbar-divider">|</span>
+                <button class="btn-add-die add-adv" onclick="applyAdvantage()" title="Convert all Hits to Crits">Advantage</button>
+                <button class="btn-add-die add-disadv" onclick="applyDisadvantage()" title="Remove all Hits">Disadvantage</button>
+                <button class="btn-add-die" onclick="rerollAllBlanks()" title="Reroll all un-rerolled Blanks">Reroll Blanks</button>
+                <button class="btn-add-die" onclick="removeAllSkills()" title="Remove all Skills">Remove Skills</button>
+                <button class="btn-add-die" onclick="removeAllHits()" title="Remove all Hits">Remove Hits</button>
+            </div>
+        </div>
+
+        <!-- Interactive Die Action Bar -->
+        <div id="die-action-bar" class="die-action-bar">
+            <span id="die-action-label" class="die-action-label">Modify Die:</span>
+            <div id="die-action-buttons" class="die-action-buttons"></div>
+        </div>
+
+        <!-- Wyrd Manifestation Active Text Banner -->
+        <div id="wyrd-banner" class="wyrd-banner">
+            <div class="wyrd-banner-left">
+                <span class="wyrd-banner-tag">Wyrd Manifestation</span>
+                <span id="wyrd-banner-text" class="wyrd-banner-text">Extra Attack</span>
+            </div>
+            <button class="wyrd-banner-clear" onclick="clearWyrdManifest()" title="Clear">✕</button>
+        </div>
+
+        <!-- Total Score -->
         <div id="total-display-container" style="display: none;" class="total-box">
-            <span class="total-label" id="total-label-text">Final Result</span>
+            <span class="total-label" id="total-label-text">Total Score</span>
             <span class="total-score" id="total-val-text">0</span>
         </div>
     </div>
 
-<!-- Presets Section -->
+    <!-- Presets Section -->
     <h2>
         <span>Presets</span>
         <button id="preset-revert-btn" class="btn btn-outline" style="display: none; height: 28px; font-size: 0.8rem; padding: 0 10px; color: var(--accent-gold); border-color: var(--accent-gold);" onclick="escapePresetMode()">
-            ✕ Revert to Previous
+            ✕ Unload
         </button>
     </h2>
+    <div style="font-size: 0.8rem; color: var(--text-muted); font-style: italic; margin-top: -6px; margin-bottom: 10px;">
+        Click to Save / Load • Double-click to Rename • Right-click to Clear
+    </div>
 
     <div class="preset-grid" id="presets-grid">
-        <!-- Click to load (or save if empty), Double-click to rename, Right-click to clear -->
         <div class="preset-slot" id="p-slot-1" onclick="handlePresetClick(1)" ondblclick="renamePreset(1)" oncontextmenu="handlePresetRightClick(event, 1)">Preset 1</div>
         <div class="preset-slot" id="p-slot-2" onclick="handlePresetClick(2)" ondblclick="renamePreset(2)" oncontextmenu="handlePresetRightClick(event, 2)">Preset 2</div>
         <div class="preset-slot" id="p-slot-3" onclick="handlePresetClick(3)" ondblclick="renamePreset(3)" oncontextmenu="handlePresetRightClick(event, 3)">Preset 3</div>
@@ -638,41 +828,117 @@
         <div class="preset-slot" id="p-slot-9" onclick="handlePresetClick(9)" ondblclick="renamePreset(9)" oncontextmenu="handlePresetRightClick(event, 9)">Preset 9</div>
         <div class="preset-slot" id="p-slot-10" onclick="handlePresetClick(10)" ondblclick="renamePreset(10)" oncontextmenu="handlePresetRightClick(event, 10)">Preset 10</div>
     </div>
+</div>
 
-<!-- Extra Training vs Resilience Decision Dialog -->
-<div id="choice-modal" class="modal-backdrop">
-    <div class="modal-box">
-        <h3 class="modal-title">Select Technique</h3>
-        <p class="modal-text" id="choice-modal-desc">You rolled blanks with both Extra Training and Resilience active. Which will you invoke?</p>
-        <div class="modal-actions">
-            <button class="btn btn-primary" onclick="resolveChoice(false)">Extra Training (Reroll All Blanks)</button>
-            <button class="btn btn-success" onclick="resolveChoice(true)">Resilience (Turn Blanks to Skills)</button>
+<!-- Wyrd Manifestations Modal -->
+<div id="wyrd-modal" class="modal-backdrop">
+    <div class="modal-box-wyrd">
+        <h3 class="modal-title">Wyrd Results: Anthropoids</h3>
+        <p id="wyrd-modal-subtitle" style="font-size: 0.86rem; color: var(--text-muted); margin-top: 0; margin-bottom: 12px;">
+            Select any tier to purchase. Buying an effect removes that number of Wyrd results from your tray.
+        </p>
+
+        <div class="table-responsive">
+            <table class="wyrd-table">
+                <thead>
+                    <tr>
+                        <th colspan="7" class="wyrd-th-title">Wyrd Results: Anthropoids</th>
+                    </tr>
+                    <tr>
+                        <th class="wyrd-th-cost">Cost</th>
+                        <th class="wyrd-th-col" id="col-w-1">1 Wyrd</th>
+                        <th class="wyrd-th-col" id="col-w-2">2 Wyrd</th>
+                        <th class="wyrd-th-col" id="col-w-3">3 Wyrd</th>
+                        <th class="wyrd-th-col" id="col-w-4">4 Wyrd</th>
+                        <th class="wyrd-th-col" id="col-w-5">5 Wyrd</th>
+                        <th class="wyrd-th-col" id="col-w-6">6 Wyrd</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Row 1: 1 Luck -->
+                    <tr>
+                        <td class="wyrd-td-luck">1 Luck</td>
+                        <td class="wyrd-cell-btn cell-cost-1" onclick="applyWyrd('Move up Initiative', 1, 1)">
+                            <span class="badge-text-effect">Move up<br>Initiative</span>
+                        </td>
+                        <td class="wyrd-cell-btn cell-cost-2" onclick="applyWyrd('Skill', 2, 1)">
+                            <span class="badge-skill">+ 1 Skill</span>
+                        </td>
+                        <td class="wyrd-cell-btn cell-cost-3" onclick="applyWyrd('Hit', 3, 1)">
+                            <span class="badge-hit">+ 1 Hit</span>
+                        </td>
+                        <td class="wyrd-cell-btn cell-cost-4" onclick="applyWyrd('Crit', 4, 1)">
+                            <span class="badge-crit">+ 1 Crit</span>
+                        </td>
+                        <td class="wyrd-cell-btn cell-cost-5" onclick="applyWyrd('Extra Attack', 5, 1)">
+                            <span class="badge-text-effect">Extra<br>Attack</span>
+                        </td>
+                        <td class="wyrd-cell-btn cell-cost-6" onclick="applyWyrd('Fell Foe', 6, 1)">
+                            <span class="badge-text-effect">Fell Foe</span>
+                        </td>
+                    </tr>
+                    <!-- Row 2: 2 Luck -->
+                    <tr>
+                        <td class="wyrd-td-luck">2 Luck</td>
+                        <td class="wyrd-cell-btn cell-cost-1" onclick="applyWyrd('Skill', 1, 2)">
+                            <span class="badge-skill">+ 1 Skill</span>
+                        </td>
+                        <td class="wyrd-cell-btn cell-cost-2" onclick="applyWyrd('Hit', 2, 2)">
+                            <span class="badge-hit">+ 1 Hit</span>
+                        </td>
+                        <td class="wyrd-cell-btn cell-cost-3" onclick="applyWyrd('Crit', 3, 2)">
+                            <span class="badge-crit">+ 1 Crit</span>
+                        </td>
+                        <td class="wyrd-cell-btn cell-cost-4" onclick="applyWyrd('Extra Attack', 4, 2)">
+                            <span class="badge-text-effect">Extra<br>Attack</span>
+                        </td>
+                        <td class="wyrd-cell-btn cell-cost-5" onclick="applyWyrd('Fell Foe', 5, 2)">
+                            <span class="badge-text-effect">Fell Foe</span>
+                        </td>
+                        <td class="wyrd-cell-empty"></td>
+                    </tr>
+                    <!-- Row 3: 3 Luck -->
+                    <tr>
+                        <td class="wyrd-td-luck">3 Luck</td>
+                        <td class="wyrd-cell-btn cell-cost-1" onclick="applyWyrd('Hit', 1, 3)">
+                            <span class="badge-hit">+ 1 Hit</span>
+                        </td>
+                        <td class="wyrd-cell-btn cell-cost-2" onclick="applyWyrd('Crit', 2, 3)">
+                            <span class="badge-crit">+ 1 Crit</span>
+                        </td>
+                        <td class="wyrd-cell-btn cell-cost-3" onclick="applyWyrd('Extra Attack', 3, 3)">
+                            <span class="badge-text-effect">Extra<br>Attack</span>
+                        </td>
+                        <td class="wyrd-cell-btn cell-cost-4" onclick="applyWyrd('Fell Foe', 4, 3)">
+                            <span class="badge-text-effect">Fell Foe</span>
+                        </td>
+                        <td class="wyrd-cell-empty"></td>
+                        <td class="wyrd-cell-empty"></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
+
+        <button class="btn btn-outline" style="min-width: 110px;" onclick="closeWyrdModal()">Close</button>
     </div>
 </div>
 
 <script>
-    const words = ['Crit', 'Hit', 'Hit', 'Skill', 'Skill', 'Skill', 'Weird', 'Blank'];
-    const specialAttacks = ["Attack/Avoid", "Check/Save", "Calculated Strike", "Crushing Blow", "Backstab", "Disadvantage", "Advantage"];
+    const words = ['Crit', 'Hit', 'Hit', 'Skill', 'Skill', 'Skill', 'Wyrd', 'Blank'];
 
-    let attackIndex = 0;
-    let rank = 1;
     let diceCount = 6;
     let bonus = 0;
     let critCount = 2;
-    let autoEnabled = true;
 
-    let pendingChoice = false;
-    let choiceCounts = null;
-    let choiceWords = [];
+    // Interactive Tray State
+    let activeDice = [];
+    let selectedDieIndex = null;
+    let activeWyrdText = "";
 
-    let lastRollState = null;
-
-    // Character State
+    // Profile & Preset State
     let charactersData = JSON.parse(localStorage.getItem('cs_characters')) || {};
     let activeCharacterId = localStorage.getItem('cs_active_char_id') || "";
 
-    // Presets allocation
     let presets = {};
     let presetNames = {
         1:"Preset 1", 2:"Preset 2", 3:"Preset 3", 4:"Preset 4", 5:"Preset 5",
@@ -680,7 +946,6 @@
     };
     let activePresetId = null;
     let manualBackupState = null;
-    let presetMode = 'load';
 
     window.addEventListener('DOMContentLoaded', () => {
         rebuildCharacterDropdown();
@@ -691,74 +956,500 @@
         }
     });
 
-    /* Steppers */
+    /* Steppers & Typed Inputs */
     function stepStat(stat, delta) {
         breakPresetLock();
-        if (stat === 'rank') {
-            rank = Math.max(1, Math.min(6, rank + delta));
-            document.getElementById('rank-val').innerText = rank;
-        } else if (stat === 'dice') {
-            diceCount = Math.max(1, Math.min(12, diceCount + delta));
-            document.getElementById('dice-val').innerText = diceCount;
+        if (stat === 'dice') {
+            diceCount = Math.max(1, Math.min(100, diceCount + delta));
+            document.getElementById('dice-val').value = diceCount;
         } else if (stat === 'bonus') {
-            bonus = Math.max(0, Math.min(100, bonus + delta));
-            document.getElementById('bonus-val').innerText = bonus;
+            bonus = Math.max(0, Math.min(999, bonus + delta));
+            document.getElementById('bonus-val').value = bonus;
+            recalculateFromTray();
         } else if (stat === 'critCount') {
             critCount = Math.max(0, Math.min(100, critCount + delta));
-            document.getElementById('crit-count-val').innerText = critCount;
+            document.getElementById('crit-count-val').value = critCount;
+            recalculateFromTray();
         }
     }
 
-    /* Attack Selection */
-    function cycleAttack(delta) {
+    function onStatType(stat) {
         breakPresetLock();
-        attackIndex = (attackIndex + delta + specialAttacks.length) % specialAttacks.length;
-        document.getElementById('attack-select').value = attackIndex;
-    }
-
-    function onAttackSelectChange() {
-        breakPresetLock();
-        attackIndex = parseInt(document.getElementById('attack-select').value, 10);
-    }
-
-    /* Toggle Chips */
-    function toggleChip(chkId, chipId) {
-        breakPresetLock();
-        const chk = document.getElementById(chkId);
-        chk.checked = !chk.checked;
-        const chip = document.getElementById(chipId);
-        if (chk.checked) {
-            chip.classList.add('checked');
-        } else {
-            chip.classList.remove('checked');
+        if (stat === 'dice') {
+            const val = parseInt(document.getElementById('dice-val').value, 10);
+            if (!isNaN(val)) {
+                diceCount = Math.max(1, val);
+            }
+        } else if (stat === 'bonus') {
+            const val = parseInt(document.getElementById('bonus-val').value, 10);
+            if (!isNaN(val)) {
+                bonus = Math.max(0, val);
+                recalculateFromTray();
+            }
+        } else if (stat === 'critCount') {
+            const val = parseInt(document.getElementById('crit-count-val').value, 10);
+            if (!isNaN(val)) {
+                critCount = Math.max(0, val);
+                recalculateFromTray();
+            }
         }
     }
 
-    function setChipState(chkId, chipId, state) {
-        const chk = document.getElementById(chkId);
-        chk.checked = !!state;
-        const chip = document.getElementById(chipId);
-        if (chk.checked) {
-            chip.classList.add('checked');
-        } else {
-            chip.classList.remove('checked');
+    function onStatBlur(stat) {
+        if (stat === 'dice') {
+            document.getElementById('dice-val').value = diceCount;
+        } else if (stat === 'bonus') {
+            document.getElementById('bonus-val').value = bonus;
+        } else if (stat === 'critCount') {
+            document.getElementById('crit-count-val').value = critCount;
         }
     }
 
-    /* Auto Calculations Toggle */
-    function toggleAuto() {
-        autoEnabled = !autoEnabled;
-        const btn = document.getElementById('auto-btn');
-        if (autoEnabled) {
-            btn.innerText = "Auto: ON";
-            btn.classList.add('active');
+    /* Core Dice Rolling */
+    function rollDice() {
+        activeDice = [];
+        activeWyrdText = "";
+        closeDieActionBar();
+
+        for (let i = 0; i < diceCount; i++) {
+            const array = new Uint32Array(1);
+            window.crypto.getRandomValues(array);
+            let word = words[array[0] % words.length];
+            if (word === 'Weird') word = 'Wyrd';
+            activeDice.push({ face: word, rerolled: false });
+        }
+
+        recalculateFromTray();
+    }
+
+    function renderDiceTokens(diceArray) {
+        const tray = document.getElementById('dice-tray');
+        tray.innerHTML = '';
+        if (diceArray.length === 0) {
+            tray.innerHTML = '<span style="color: var(--text-muted); font-style: italic;">No dice remaining in tray.</span>';
+            return;
+        }
+
+        diceArray.forEach((die, idx) => {
+            const face = typeof die === 'string' ? die : die.face;
+            const isLocked = !!(die && die.rerolled);
+            const cleanClass = face.replace('+', 'plus-').replace('-', 'minus-').split(' ')[0];
+
+            const span = document.createElement('span');
+            span.className = 'die-token ' + cleanClass + 
+                (selectedDieIndex === idx ? ' selected-die' : '');
+
+            span.innerHTML = isLocked ? `${face} <span class="lock-icon">🔒</span>` : face;
+            span.title = isLocked ? 'Rerolled (Tap to modify)' : 'Tap to modify';
+            span.onclick = () => handleDieClick(idx);
+            
+            tray.appendChild(span);
+        });
+    }
+
+    /* Interactive Die Action Menu */
+    function handleDieClick(idx) {
+        const die = activeDice[idx];
+        if (!die) return;
+
+        const face = (typeof die === 'string' ? die : die.face).split(' ')[0];
+        const canReroll = !die.rerolled;
+
+        selectedDieIndex = idx;
+        renderDiceTokens(activeDice);
+
+        const bar = document.getElementById('die-action-bar');
+        const label = document.getElementById('die-action-label');
+        const container = document.getElementById('die-action-buttons');
+        container.innerHTML = '';
+
+        label.innerText = `Selected Die #${idx + 1} (${face}${die.rerolled ? ' 🔒' : ''}):`;
+
+        if (face === 'Blank') {
+            container.innerHTML += `<button class="btn btn-outline" style="height:32px; font-size:0.8rem;" onclick="upgradeDie(${idx}, 'Skill')">✦ Upgrade to Skill</button>`;
+            if (canReroll) {
+                container.innerHTML += `<button class="btn btn-outline" style="height:32px; font-size:0.8rem;" onclick="rerollDie(${idx})">⟳ Reroll</button>`;
+            }
+        } else if (face === 'Skill') {
+            container.innerHTML += `<button class="btn btn-outline" style="height:32px; font-size:0.8rem;" onclick="upgradeDie(${idx}, 'Hit')">✦ Upgrade to Hit</button>`;
+            container.innerHTML += `<button class="btn btn-gold" style="height:32px; font-size:0.8rem;" onclick="upgradeDie(${idx}, 'Crit')">★ Upgrade to Crit</button>`;
+            if (canReroll) {
+                container.innerHTML += `<button class="btn btn-outline" style="height:32px; font-size:0.8rem;" onclick="rerollDie(${idx})">⟳ Reroll</button>`;
+            }
+            container.innerHTML += `<button class="btn btn-danger" style="height:32px; font-size:0.8rem;" onclick="removeDie(${idx})">✕ Remove</button>`;
+        } else if (face === 'Wyrd' || face === 'Weird') {
+            container.innerHTML += `<button class="btn btn-outline" style="height:32px; font-size:0.8rem; color:#5a2e68; border-color:#9c67ab;" onclick="openWyrdModal()">Manifest</button>`;
+            if (canReroll) {
+                container.innerHTML += `<button class="btn btn-outline" style="height:32px; font-size:0.8rem;" onclick="rerollDie(${idx})">⟳ Reroll</button>`;
+            }
+            container.innerHTML += `<button class="btn btn-danger" style="height:32px; font-size:0.8rem;" onclick="removeDie(${idx})">✕ Remove</button>`;
+        } else if (face === 'Hit') {
+            container.innerHTML += `<button class="btn btn-gold" style="height:32px; font-size:0.8rem;" onclick="upgradeDie(${idx}, 'Crit')">★ Upgrade to Crit</button>`;
+            container.innerHTML += `<button class="btn btn-danger" style="height:32px; font-size:0.8rem;" onclick="removeDie(${idx})">✕ Remove</button>`;
+        } else if (face === 'Crit') {
+            container.innerHTML += `<button class="btn btn-danger" style="height:32px; font-size:0.8rem;" onclick="removeDie(${idx})">✕ Remove</button>`;
+        } else if (face === '+1x' || face === '-1x') {
+            container.innerHTML += `<button class="btn btn-danger" style="height:32px; font-size:0.8rem;" onclick="removeDie(${idx})">✕ Remove</button>`;
+        }
+
+        container.innerHTML += `<button class="btn btn-outline" style="height:32px; font-size:0.8rem;" onclick="closeDieActionBar()">Cancel</button>`;
+        bar.style.display = 'flex';
+    }
+
+    function upgradeDie(idx, newFace) {
+        activeDice[idx].face = newFace;
+        closeDieActionBar();
+        recalculateFromTray();
+    }
+
+    function rerollDie(idx) {
+        const array = new Uint32Array(1);
+        window.crypto.getRandomValues(array);
+        let word = words[array[0] % words.length];
+        if (word === 'Weird') word = 'Wyrd';
+        
+        activeDice[idx] = { face: word, rerolled: true };
+        
+        closeDieActionBar();
+        recalculateFromTray();
+    }
+
+    function removeDie(idx) {
+        activeDice.splice(idx, 1);
+        closeDieActionBar();
+        recalculateFromTray();
+    }
+
+    function addManualDie(face) {
+        activeDice.push({ face: face, rerolled: false });
+        closeDieActionBar();
+        recalculateFromTray();
+    }
+
+    function closeDieActionBar() {
+        selectedDieIndex = null;
+        const bar = document.getElementById('die-action-bar');
+        if (bar) bar.style.display = 'none';
+        renderDiceTokens(activeDice);
+    }
+
+    /* Batch Tray Actions */
+    function removeAllSkills() {
+        activeDice = activeDice.filter(die => {
+            const face = (typeof die === 'string' ? die : die.face).split(' ')[0];
+            return face !== 'Skill';
+        });
+        closeDieActionBar();
+        recalculateFromTray();
+    }
+
+    function removeAllHits() {
+        activeDice = activeDice.filter(die => {
+            const face = (typeof die === 'string' ? die : die.face).split(' ')[0];
+            return face !== 'Hit';
+        });
+        closeDieActionBar();
+        recalculateFromTray();
+    }
+
+    function applyAdvantage() {
+        activeDice.forEach(die => {
+            const face = (typeof die === 'string' ? die : die.face).split(' ')[0];
+            if (face === 'Hit') {
+                die.face = 'Crit';
+            }
+        });
+        closeDieActionBar();
+        recalculateFromTray();
+    }
+
+    function applyDisadvantage() {
+        removeAllHits();
+    }
+
+    function rerollAllBlanks() {
+        let count = 0;
+        activeDice.forEach(die => {
+            const face = (typeof die === 'string' ? die : die.face).split(' ')[0];
+            if (face === 'Blank' && !die.rerolled) count++;
+        });
+
+        if (count === 0) return;
+
+        const array = new Uint32Array(count);
+        window.crypto.getRandomValues(array);
+        let idx = 0;
+
+        activeDice.forEach(die => {
+            const face = (typeof die === 'string' ? die : die.face).split(' ')[0];
+            if (face === 'Blank' && !die.rerolled) {
+                let word = words[array[idx++] % words.length];
+                if (word === 'Weird') word = 'Wyrd';
+                die.face = word;
+                die.rerolled = true;
+            }
+        });
+
+        closeDieActionBar();
+        recalculateFromTray();
+    }
+
+    /* Score Calculation */
+    function recalculateFromTray() {
+        const counts = { 'Crit': 0, 'Hit': 0, 'Skill': 0, 'Wyrd': 0, 'Blank': 0, '+1x': 0, '-1x': 0 };
+
+        activeDice.forEach(die => {
+            const base = (typeof die === 'string' ? die : die.face).split(' ')[0];
+            if (base === 'Weird') counts['Wyrd']++;
+            else if (counts.hasOwnProperty(base)) counts[base]++;
+        });
+
+        renderDiceTokens(activeDice);
+
+        // Update Wyrd Text Banner
+        const banner = document.getElementById('wyrd-banner');
+        const bannerText = document.getElementById('wyrd-banner-text');
+        if (activeWyrdText) {
+            bannerText.innerText = activeWyrdText;
+            banner.style.display = 'flex';
         } else {
-            btn.innerText = "Auto: OFF";
-            btn.classList.remove('active');
+            banner.style.display = 'none';
+        }
+
+        if (activeDice.length === 0) {
+            document.getElementById('total-display-container').style.display = 'none';
+            return;
+        }
+
+        let basePoints = (counts['Crit'] * critCount) + (counts['Hit'] * 1);
+        let totalAmount = basePoints;
+
+        let effectiveMultiplier = Math.max(1, counts['Crit'] + counts['+1x'] - counts['-1x']);
+
+        if (counts['Crit'] > 0) {
+            totalAmount = totalAmount * effectiveMultiplier;
+        }
+
+        let damageAmount = totalAmount + bonus;
+
+        const totalContainer = document.getElementById('total-display-container');
+        const totalLabel = document.getElementById('total-label-text');
+        const totalVal = document.getElementById('total-val-text');
+
+        totalContainer.style.display = 'flex';
+        totalLabel.innerText = "Total Score";
+        totalVal.innerText = damageAmount;
+    }
+
+    /* Wyrd Manifestations Logic */
+    function openWyrdModal() {
+        closeDieActionBar();
+        const countsWyrd = activeDice.filter(d => {
+            const f = (typeof d === 'string' ? d : d.face).split(' ')[0];
+            return f === 'Wyrd' || f === 'Weird';
+        }).length;
+
+        const sub = document.getElementById('wyrd-modal-subtitle');
+        if (countsWyrd > 0) {
+            sub.innerHTML = `Available in tray: <strong>${countsWyrd} Wyrd</strong>. Purchase from any Luck tier as long as you have enough Wyrd results.`;
+        } else {
+            sub.innerText = "No Wyrd dice currently in tray. Purchasing an option requires matching Wyrd results.";
+        }
+
+        // Enable/disable cells in all rows based on column Wyrd cost
+        for (let cost = 1; cost <= 6; cost++) {
+            const th = document.getElementById('col-w-' + cost);
+            if (th) {
+                if (cost <= countsWyrd) th.classList.add('col-highlight');
+                else th.classList.remove('col-highlight');
+            }
+
+            const cells = document.querySelectorAll('.cell-cost-' + cost);
+            cells.forEach(cell => {
+                if (cost <= countsWyrd) {
+                    cell.classList.remove('disabled');
+                } else {
+                    cell.classList.add('disabled');
+                }
+            });
+        }
+
+        document.getElementById('wyrd-modal').style.display = 'flex';
+    }
+
+    function closeWyrdModal() {
+        document.getElementById('wyrd-modal').style.display = 'none';
+    }
+
+    function applyWyrd(effectType, wyrdCost, luckCost) {
+        const availableWyrds = activeDice.filter(d => {
+            const f = (typeof d === 'string' ? d : d.face).split(' ')[0];
+            return f === 'Wyrd' || f === 'Weird';
+        }).length;
+
+        if (availableWyrds < wyrdCost) {
+            alert(`You need at least ${wyrdCost} Wyrd results to purchase this effect (you currently have ${availableWyrds}).`);
+            return;
+        }
+
+        // Remove exactly wyrdCost Wyrd dice from the tray, regardless of which die was clicked
+        let removed = 0;
+        for (let i = activeDice.length - 1; i >= 0 && removed < wyrdCost; i--) {
+            const f = (typeof activeDice[i] === 'string' ? activeDice[i] : activeDice[i].face).split(' ')[0];
+            if (f === 'Wyrd' || f === 'Weird') {
+                activeDice.splice(i, 1);
+                removed++;
+            }
+        }
+
+        // Apply effect
+        if (effectType === 'Skill' || effectType === 'Hit' || effectType === 'Crit') {
+            activeDice.push({ face: effectType, rerolled: false });
+        } else {
+            activeWyrdText = `${effectType} (${luckCost} Luck)`;
+        }
+
+        closeDieActionBar();
+        closeWyrdModal();
+        recalculateFromTray();
+    }
+
+    function clearWyrdManifest() {
+        activeWyrdText = "";
+        recalculateFromTray();
+    }
+
+    /* Presets */
+    function handlePresetClick(num) {
+        if (!presets[num]) {
+            savePreset(num);
+        } else if (activePresetId === num) {
+            escapePresetMode();
+        } else {
+            loadPreset(num);
         }
     }
 
-    /* Character Management */
+    function loadPreset(num) {
+        if (!presets[num]) return;
+
+        if (activePresetId === null) {
+            manualBackupState = {
+                diceCount: diceCount,
+                bonus: bonus,
+                critCount: critCount
+            };
+        }
+
+        activePresetId = num;
+        const p = presets[num];
+
+        diceCount = p.diceCount;
+        bonus = p.bonus;
+        critCount = (p.critCount !== undefined) ? p.critCount : 2;
+
+        document.getElementById('dice-val').value = diceCount;
+        document.getElementById('bonus-val').value = bonus;
+        document.getElementById('crit-count-val').value = critCount;
+
+        const revertBtn = document.getElementById('preset-revert-btn');
+        if (revertBtn) {
+            revertBtn.style.display = 'inline-flex';
+            revertBtn.innerText = `✕ Unload "${presetNames[num]}"`;
+        }
+
+        renderPresetSlots();
+    }
+
+    function savePreset(num) {
+        presets[num] = {
+            diceCount: diceCount,
+            bonus: bonus,
+            critCount: critCount
+        };
+
+        if (activeCharacterId && charactersData[activeCharacterId]) {
+            charactersData[activeCharacterId].presets = presets;
+            localStorage.setItem('cs_characters', JSON.stringify(charactersData));
+        }
+        renderPresetSlots();
+    }
+
+    function renamePreset(num) {
+        const cur = presetNames[num] || ("Preset " + num);
+        const name = prompt("Rename preset " + num + ":", cur);
+        if (name && name.trim()) {
+            presetNames[num] = name.trim();
+            if (activeCharacterId && charactersData[activeCharacterId]) {
+                charactersData[activeCharacterId].presetNames = presetNames;
+                localStorage.setItem('cs_characters', JSON.stringify(charactersData));
+            }
+            if (activePresetId === num) {
+                document.getElementById('preset-revert-btn').innerText = `✕ Unload "${presetNames[num]}"`;
+            }
+            renderPresetSlots();
+        }
+    }
+
+    function handlePresetRightClick(e, num) {
+        e.preventDefault();
+        if (!presets[num]) return;
+        if (confirm("Clear " + presetNames[num] + "?")) {
+            delete presets[num];
+            presetNames[num] = "Preset " + num;
+            if (activePresetId === num) escapePresetMode();
+            if (activeCharacterId && charactersData[activeCharacterId]) {
+                charactersData[activeCharacterId].presets = presets;
+                charactersData[activeCharacterId].presetNames = presetNames;
+                localStorage.setItem('cs_characters', JSON.stringify(charactersData));
+            }
+            renderPresetSlots();
+        }
+    }
+
+    function escapePresetMode() {
+        if (manualBackupState) {
+            const b = manualBackupState;
+            diceCount = b.diceCount;
+            bonus = b.bonus;
+            critCount = b.critCount;
+
+            document.getElementById('dice-val').value = diceCount;
+            document.getElementById('bonus-val').value = bonus;
+            document.getElementById('crit-count-val').value = critCount;
+        }
+
+        activePresetId = null;
+        manualBackupState = null;
+
+        const revertBtn = document.getElementById('preset-revert-btn');
+        if (revertBtn) revertBtn.style.display = 'none';
+
+        renderPresetSlots();
+    }
+
+    function breakPresetLock() {
+        if (activePresetId !== null) {
+            activePresetId = null;
+            manualBackupState = null;
+            const revertBtn = document.getElementById('preset-revert-btn');
+            if (revertBtn) revertBtn.style.display = 'none';
+            renderPresetSlots();
+        }
+    }
+
+    function renderPresetSlots() {
+        for (let i = 1; i <= 10; i++) {
+            const slot = document.getElementById('p-slot-' + i);
+            if (!slot) continue;
+            slot.innerText = presetNames[i] || ("Preset " + i);
+            slot.classList.remove('active', 'has-data');
+            if (activePresetId === i) slot.classList.add('active');
+            else if (presets[i]) slot.classList.add('has-data');
+        }
+    }
+
+    /* Character Profiles */
     function rebuildCharacterDropdown() {
         const dd = document.getElementById('char-dropdown');
         dd.innerHTML = '<option value="">-- Select Character Profile --</option>';
@@ -779,8 +1470,7 @@
         const id = "char_" + Date.now();
         charactersData[id] = {
             name: name,
-            rank: 1, diceCount: 6, bonus: 0, critCount: 2, attackIndex: 0,
-            prof: false, extra: false, mastery: false, resilience: false,
+            diceCount: 6, bonus: 0, critCount: 2,
             presets: {},
             presetNames: {
                 1:"Preset 1", 2:"Preset 2", 3:"Preset 3", 4:"Preset 4", 5:"Preset 5",
@@ -802,16 +1492,9 @@
             return;
         }
 
-        charactersData[activeCharacterId].rank = rank;
         charactersData[activeCharacterId].diceCount = diceCount;
         charactersData[activeCharacterId].bonus = bonus;
         charactersData[activeCharacterId].critCount = critCount;
-        charactersData[activeCharacterId].attackIndex = attackIndex;
-
-        charactersData[activeCharacterId].prof = document.getElementById('chk-prof').checked;
-        charactersData[activeCharacterId].extra = document.getElementById('chk-extra').checked;
-        charactersData[activeCharacterId].mastery = document.getElementById('chk-mastery').checked;
-        charactersData[activeCharacterId].resilience = document.getElementById('chk-resilience').checked;
 
         charactersData[activeCharacterId].presets = presets;
         charactersData[activeCharacterId].presetNames = presetNames;
@@ -834,22 +1517,13 @@
         const data = charactersData[id];
         document.getElementById('char-dropdown').value = id;
 
-        rank = data.rank;
-        diceCount = data.diceCount;
-        bonus = data.bonus;
+        diceCount = data.diceCount || 6;
+        bonus = data.bonus || 0;
         critCount = (data.critCount !== undefined) ? data.critCount : 2;
-        attackIndex = data.attackIndex || 0;
 
-        document.getElementById('rank-val').innerText = rank;
-        document.getElementById('dice-val').innerText = diceCount;
-        document.getElementById('bonus-val').innerText = bonus;
-        document.getElementById('crit-count-val').innerText = critCount;
-        document.getElementById('attack-select').value = attackIndex;
-
-        setChipState('chk-prof', 'chip-prof', data.prof);
-        setChipState('chk-extra', 'chip-extra', data.extra);
-        setChipState('chk-mastery', 'chip-mastery', data.mastery);
-        setChipState('chk-resilience', 'chip-resilience', data.resilience);
+        document.getElementById('dice-val').value = diceCount;
+        document.getElementById('bonus-val').value = bonus;
+        document.getElementById('crit-count-val').value = critCount;
 
         presets = data.presets || {};
         presetNames = data.presetNames || {
@@ -857,8 +1531,7 @@
             6:"Preset 6", 7:"Preset 7", 8:"Preset 8", 9:"Preset 9", 10:"Preset 10"
         };
 
-        activePresetId = null;
-        manualBackupState = null;
+        escapePresetMode();
         renderPresetSlots();
     }
 
@@ -879,448 +1552,8 @@
         rebuildCharacterDropdown();
         presets = {};
         for (let i = 1; i <= 10; i++) presetNames[i] = "Preset " + i;
+        escapePresetMode();
         renderPresetSlots();
-    }
-
-    /* Preset Management */
-    function setPresetMode(mode) {
-        presetMode = mode;
-        const modes = ['load', 'save', 'rename', 'clear'];
-        modes.forEach(m => {
-            const btn = document.getElementById('pmode-' + m);
-            if (btn) {
-                if (m === mode) btn.classList.add('active');
-                else btn.classList.remove('active');
-            }
-        });
-
-        const hint = document.getElementById('preset-mode-hint');
-        if (mode === 'load') hint.innerText = "Tap a slot to load";
-        else if (mode === 'save') hint.innerText = "Tap a slot to save current setup";
-        else if (mode === 'rename') hint.innerText = "Tap a slot to rename";
-        else if (mode === 'clear') hint.innerText = "Tap a slot to clear";
-    }
-
-// --- STREAMLINED PRESET LOGIC ---
-
-    // Single click: Load if saved, or immediately save current stats if empty
-    function handlePresetClick(num) {
-        if (!presets[num]) {
-            // Empty slot: one-click instant save
-            savePreset(num);
-        } else if (activePresetId === num) {
-            // Clicking the active preset unloads it back to manual
-            escapePresetMode();
-        } else {
-            // Load existing
-            loadPreset(num);
-        }
-    }
-
-    // Double click: Quick rename
-    function renamePreset(num) {
-        const cur = presetNames[num] || ("Preset " + num);
-        const name = prompt("Rename preset " + num + ":", cur);
-        if (name && name.trim()) {
-            presetNames[num] = name.trim();
-            if (activeCharacterId && charactersData[activeCharacterId]) {
-                charactersData[activeCharacterId].presetNames = presetNames;
-                localStorage.setItem('cs_characters', JSON.stringify(charactersData));
-            }
-            renderPresetSlots();
-        }
-    }
-
-    // Right click (or long-tap context menu): Quick clear
-    function handlePresetRightClick(event, num) {
-        event.preventDefault();
-        if (!presets[num]) return;
-        if (confirm("Clear " + presetNames[num] + "?")) {
-            clearPreset(num);
-        }
-    }
-
- function loadPreset(num) {
-        if (!presets[num]) {
-            alert(presetNames[num] + " is empty.");
-            return;
-        }
-
-        // Tapping the currently active preset unloads it
-        if (activePresetId === num) {
-            escapePresetMode();
-            return;
-        }
-
-        // Save snapshot of current ad-hoc numbers before overriding
-        if (activePresetId === null) {
-            manualBackupState = {
-                diceCount: diceCount,
-                bonus: bonus,
-                critCount: critCount,
-                attackIndex: attackIndex,
-                prof: document.getElementById('chk-prof').checked,
-                extra: document.getElementById('chk-extra').checked,
-                mastery: document.getElementById('chk-mastery').checked,
-                resilience: document.getElementById('chk-resilience').checked
-            };
-        }
-
-        activePresetId = num;
-        const p = presets[num];
-
-        diceCount = p.diceCount;
-        bonus = p.bonus;
-        critCount = (p.critCount !== undefined) ? p.critCount : 2;
-        attackIndex = p.attackIndex || 0;
-
-        document.getElementById('dice-val').innerText = diceCount;
-        document.getElementById('bonus-val').innerText = bonus;
-        document.getElementById('crit-count-val').innerText = critCount;
-        document.getElementById('attack-select').value = attackIndex;
-
-        setChipState('chk-prof', 'chip-prof', p.prof);
-        setChipState('chk-extra', 'chip-extra', p.extra);
-        setChipState('chk-mastery', 'chip-mastery', p.mastery);
-        setChipState('chk-resilience', 'chip-resilience', p.resilience);
-
-        // Show the Revert button with the preset's name
-        const revertBtn = document.getElementById('preset-revert-btn');
-        if (revertBtn) {
-            revertBtn.style.display = 'inline-flex';
-            revertBtn.innerText = `✕ Unload "${presetNames[num]}"`;
-        }
-
-        renderPresetSlots();
-    }
-
-    function escapePresetMode() {
-        if (manualBackupState) {
-            const b = manualBackupState;
-            diceCount = b.diceCount;
-            bonus = b.bonus;
-            critCount = b.critCount;
-            attackIndex = b.attackIndex;
-
-            document.getElementById('dice-val').innerText = diceCount;
-            document.getElementById('bonus-val').innerText = bonus;
-            document.getElementById('crit-count-val').innerText = critCount;
-            document.getElementById('attack-select').value = attackIndex;
-
-            setChipState('chk-prof', 'chip-prof', b.prof);
-            setChipState('chk-extra', 'chip-extra', b.extra);
-            setChipState('chk-mastery', 'chip-mastery', b.mastery);
-            setChipState('chk-resilience', 'chip-resilience', b.resilience);
-        }
-
-        activePresetId = null;
-        manualBackupState = null;
-
-        // Hide revert button
-        const revertBtn = document.getElementById('preset-revert-btn');
-        if (revertBtn) revertBtn.style.display = 'none';
-
-        renderPresetSlots();
-    }
-
-    function breakPresetLock() {
-        if (activePresetId !== null) {
-            activePresetId = null;
-            manualBackupState = null;
-
-            const revertBtn = document.getElementById('preset-revert-btn');
-            if (revertBtn) revertBtn.style.display = 'none';
-
-            renderPresetSlots();
-        }
-    }
-
-    function savePreset(num) {
-        presets[num] = {
-            diceCount: diceCount,
-            bonus: bonus,
-            critCount: critCount,
-            attackIndex: attackIndex,
-            prof: document.getElementById('chk-prof').checked,
-            extra: document.getElementById('chk-extra').checked,
-            mastery: document.getElementById('chk-mastery').checked,
-            resilience: document.getElementById('chk-resilience').checked
-        };
-
-        if (activeCharacterId && charactersData[activeCharacterId]) {
-            charactersData[activeCharacterId].presets = presets;
-            localStorage.setItem('cs_characters', JSON.stringify(charactersData));
-        }
-        renderPresetSlots();
-    }
-
-    function renamePreset(num) {
-        const cur = presetNames[num] || ("Preset " + num);
-        const name = prompt("Rename preset:", cur);
-        if (name && name.trim()) {
-            presetNames[num] = name.trim();
-            if (activeCharacterId && charactersData[activeCharacterId]) {
-                charactersData[activeCharacterId].presetNames = presetNames;
-                localStorage.setItem('cs_characters', JSON.stringify(charactersData));
-            }
-            renderPresetSlots();
-        }
-    }
-
-    function clearPreset(num) {
-        if (!presets[num]) return;
-        delete presets[num];
-        presetNames[num] = "Preset " + num;
-
-        if (activePresetId === num) {
-            activePresetId = null;
-            manualBackupState = null;
-        }
-
-        if (activeCharacterId && charactersData[activeCharacterId]) {
-            charactersData[activeCharacterId].presets = presets;
-            charactersData[activeCharacterId].presetNames = presetNames;
-            localStorage.setItem('cs_characters', JSON.stringify(charactersData));
-        }
-        renderPresetSlots();
-    }
-
-
-    function renderPresetSlots() {
-        for (let i = 1; i <= 10; i++) {
-            const slot = document.getElementById('p-slot-' + i);
-            if (!slot) continue;
-            slot.innerText = presetNames[i] || ("Preset " + i);
-
-            slot.classList.remove('active', 'has-data');
-            if (activePresetId === i) slot.classList.add('active');
-            else if (presets[i]) slot.classList.add('has-data');
-        }
-    }
-
-    /* Core Dice Rolling Mechanics */
-    function rollDice() {
-        let counts = { 'Crit': 0, 'Hit': 0, 'Skill': 0, 'Weird': 0, 'Blank': 0 };
-        let chosenWords = [];
-
-        for (let i = 0; i < diceCount; i++) {
-            const array = new Uint32Array(1);
-            window.crypto.getRandomValues(array);
-            const randomWord = words[array[0] % words.length];
-            chosenWords.push(randomWord);
-            if (counts.hasOwnProperty(randomWord)) counts[randomWord]++;
-        }
-
-        if (!autoEnabled) {
-            renderDiceTokens(chosenWords);
-            renderCountsSummary(counts);
-            document.getElementById('total-display-container').style.display = 'none';
-            return;
-        }
-
-        const hasExtraTraining = document.getElementById('chk-extra').checked;
-        const hasResilience = document.getElementById('chk-resilience').checked;
-
-        // Choice Conflict: Both active and blanks rolled
-        if (hasExtraTraining && hasResilience && counts['Blank'] > 0) {
-            choiceCounts = counts;
-            choiceWords = chosenWords;
-            document.getElementById('choice-modal-desc').innerText = 
-                `Rolled ${counts['Blank']} blank(s) and ${counts['Skill']} skill(s). Choose your resolution:`;
-            document.getElementById('choice-modal').style.display = 'flex';
-            return;
-        }
-
-        executePipeline(counts, chosenWords);
-    }
-
-    function resolveChoice(chooseResilience) {
-        document.getElementById('choice-modal').style.display = 'none';
-        let counts = choiceCounts;
-        let chosenWords = choiceWords;
-
-        if (chooseResilience) {
-            counts['Skill'] += counts['Blank'];
-            counts['Blank'] = 0;
-            chosenWords = chosenWords.map(w => w === 'Blank' ? 'Skill (Resilience)' : w);
-        } else {
-            const initialBlanks = counts['Blank'];
-            counts['Blank'] = 0;
-            chosenWords = chosenWords.filter(w => w !== 'Blank');
-
-            for (let j = 0; j < initialBlanks; j++) {
-                const array = new Uint32Array(1);
-                window.crypto.getRandomValues(array);
-                const randomWord = words[array[0] % words.length];
-                if (counts.hasOwnProperty(randomWord)) counts[randomWord]++;
-                chosenWords.push(randomWord + " (Reroll)");
-            }
-        }
-
-        executePipeline(counts, chosenWords, true);
-    }
-
-    function executePipeline(counts, chosenWords, chosenAlternative = false) {
-        const isProficient = document.getElementById('chk-prof').checked;
-        const hasExtraTraining = document.getElementById('chk-extra').checked;
-        const hasMastery = document.getElementById('chk-mastery').checked;
-        const hasResilience = document.getElementById('chk-resilience').checked;
-
-        if (!chosenAlternative) {
-            if (hasResilience && counts['Blank'] > 0) {
-                counts['Skill'] += counts['Blank'];
-                counts['Blank'] = 0;
-                chosenWords = chosenWords.map(w => w === 'Blank' ? 'Skill (Resilience)' : w);
-            }
-
-            if (hasMastery) {
-                counts['Crit']++;
-                chosenWords.push("Crit (Mastery)");
-            }
-
-            if (hasExtraTraining && counts['Blank'] > 0) {
-                const initialBlanks = counts['Blank'];
-                counts['Blank'] = 0;
-                chosenWords = chosenWords.filter(w => w !== 'Blank');
-
-                for (let j = 0; j < initialBlanks; j++) {
-                    const array = new Uint32Array(1);
-                    window.crypto.getRandomValues(array);
-                    const randomWord = words[array[0] % words.length];
-                    if (counts.hasOwnProperty(randomWord)) counts[randomWord]++;
-                    chosenWords.push(randomWord + " (Reroll)");
-                }
-            }
-        } else if (hasMastery) {
-            counts['Crit']++;
-            chosenWords.push("Crit (Mastery)");
-        }
-
-        const activeAttack = specialAttacks[attackIndex];
-
-        if (activeAttack === "Advantage") {
-            counts['Crit'] += counts['Hit'];
-            counts['Hit'] = 0;
-            if (isProficient) {
-                let convert = Math.min(counts['Skill'], rank);
-                counts['Hit'] += convert;
-                counts['Skill'] -= convert;
-            }
-        } else if (activeAttack === "Disadvantage") {
-            counts['Blank'] += counts['Hit'];
-            counts['Hit'] = 0;
-            if (isProficient) {
-                let convert = Math.min(counts['Skill'], rank);
-                counts['Hit'] += convert;
-                counts['Skill'] -= convert;
-            }
-        } else if (activeAttack === "Backstab") {
-            if (isProficient) {
-                let convert = Math.min(counts['Skill'], rank);
-                counts['Crit'] += convert;
-                counts['Skill'] -= convert;
-            }
-        } else if (activeAttack === "Calculated Strike") {
-            counts['Blank'] += counts['Hit'];
-            counts['Hit'] = 0;
-            if (isProficient) {
-                let convert = Math.min(counts['Skill'], rank);
-                counts['Crit'] += convert;
-                counts['Skill'] -= convert;
-            }
-        } else if (activeAttack === "Crushing Blow") {
-            counts['Blank'] += counts['Skill'];
-            counts['Skill'] = 0;
-            let convert = Math.min(counts['Hit'], rank);
-            counts['Crit'] += convert;
-            counts['Hit'] -= convert;
-        } else {
-            if (isProficient) {
-                let convert = Math.min(counts['Skill'], rank);
-                counts['Hit'] += convert;
-                counts['Skill'] -= convert;
-            }
-        }
-
-        // Calculation Formula
-        let basePoints = (counts['Crit'] * critCount) + (counts['Hit'] * 1);
-        let totalAmount = basePoints;
-
-        if (counts['Crit'] > 0 && activeAttack !== "Check/Save") {
-            totalAmount = totalAmount * counts['Crit'];
-        }
-
-        let damageAmount = totalAmount + bonus;
-
-        renderDiceTokens(chosenWords);
-        renderCountsSummary(counts);
-
-        const totalContainer = document.getElementById('total-display-container');
-        const totalLabel = document.getElementById('total-label-text');
-        const totalVal = document.getElementById('total-val-text');
-
-        totalContainer.style.display = 'flex';
-        totalLabel.innerText = (activeAttack === "Attack/Avoid" ? "Total Score" : activeAttack + " Total");
-        totalVal.innerText = damageAmount;
-
-// Save roll snapshot and reveal the +1 Crit button
-        lastRollState = { counts: counts, chosenWords: chosenWords, activeAttack: activeAttack };
-        document.getElementById('btn-add-crit').style.display = 'inline-flex';
-    
-}
-
-function addManualCrit() {
-        if (!lastRollState) return;
-
-        // Add 1 Crit to the active roll counts and tray tokens
-        lastRollState.counts['Crit']++;
-        lastRollState.chosenWords.push('Crit (Manual)');
-
-        renderDiceTokens(lastRollState.chosenWords);
-        renderCountsSummary(lastRollState.counts);
-
-        if (autoEnabled) {
-            const activeAttack = lastRollState.activeAttack;
-            let basePoints = (lastRollState.counts['Crit'] * critCount) + (lastRollState.counts['Hit'] * 1);
-            let totalAmount = basePoints;
-
-            // Recalculate Crit multiplication
-            if (lastRollState.counts['Crit'] > 0 && activeAttack !== "Check/Save") {
-                totalAmount = totalAmount * lastRollState.counts['Crit'];
-            }
-
-            let damageAmount = totalAmount + bonus;
-
-            const totalContainer = document.getElementById('total-display-container');
-            const totalLabel = document.getElementById('total-label-text');
-            const totalVal = document.getElementById('total-val-text');
-
-            totalContainer.style.display = 'flex';
-            totalLabel.innerText = (activeAttack === "Attack/Avoid" ? "Total Score" : activeAttack + " Total");
-            totalVal.innerText = damageAmount;
-        }
-    }
-
-    function renderDiceTokens(wordsArray) {
-        const tray = document.getElementById('dice-tray');
-        tray.innerHTML = '';
-        wordsArray.forEach(word => {
-            const span = document.createElement('span');
-            span.className = 'die-token ' + word.split(' ')[0];
-            span.innerText = word;
-            tray.appendChild(span);
-        });
-    }
-
-    function renderCountsSummary(counts) {
-        const summary = document.getElementById('counts-summary');
-        summary.innerHTML = `
-            <span class="count-pill"><strong>Crits:</strong> ${counts['Crit']}</span>
-            <span class="count-pill"><strong>Hits:</strong> ${counts['Hit']}</span>
-            <span class="count-pill"><strong>Skills:</strong> ${counts['Skill']}</span>
-            <span class="count-pill"><strong>Weirds:</strong> ${counts['Weird']}</span>
-            <span class="count-pill"><strong>Blanks:</strong> ${counts['Blank']}</span>
-        `;
     }
 </script>
 
