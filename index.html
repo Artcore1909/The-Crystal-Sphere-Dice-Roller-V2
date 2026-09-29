@@ -708,7 +708,7 @@
         <select id="char-dropdown" onchange="handleCharacterSelect()">
             <option value="">-- Select Character Profile --</option>
         </select>
-        <button class="btn btn-outline" onclick="promptNewCharacter()">+ New</button>
+        <button class="btn btn-outline" onclick="promptNewCharacter()">New</button>
         <button class="btn btn-gold" onclick="saveActiveCharacter()">Save</button>
         <button class="btn btn-danger" onclick="deleteActiveCharacter()">Delete</button>
     </div>
@@ -725,7 +725,7 @@
         </div>
 
         <div class="aspect-card">
-            <span class="aspect-name">Flat Bonus</span>
+            <span class="aspect-name">Bonus Damage/Damage Reduction</span>
             <div class="stepper-container">
                 <button class="stepper-btn" onclick="stepStat('bonus', -1)">−</button>
                 <input type="number" id="bonus-val" class="aspect-val-input" value="0" min="0" oninput="onStatType('bonus')" onblur="onStatBlur('bonus')" onfocus="this.select()">
@@ -745,7 +745,7 @@
 
     <!-- Roll Action -->
     <div class="roll-action-container">
-        <button class="btn btn-primary btn-roll-main" onclick="rollDice()">Roll Dice</button>
+        <button class="btn btn-primary btn-roll-main" onclick="rollDice()">Roll</button>
     </div>
 
     <!-- Results Card -->
@@ -759,7 +759,7 @@
         </div>
 
         <div id="dice-tray" class="dice-tray">
-            <span style="color: var(--text-muted); font-style: italic;">Tap "Roll Dice" to generate results</span>
+            <span style="color: var(--text-muted); font-style: italic;">Tap "Roll" to generate results</span>
         </div>
 
 <!-- Add Result Toolbar -->
@@ -800,7 +800,7 @@
 
         <!-- Total Score -->
         <div id="total-display-container" style="display: none;" class="total-box">
-            <span class="total-label" id="total-label-text">Total Score</span>
+            <span class="total-label" id="total-label-text">Total</span>
             <span class="total-score" id="total-val-text">0</span>
         </div>
     </div>
@@ -1039,7 +1039,7 @@
             span.className = 'die-token ' + cleanClass + 
                 (selectedDieIndex === idx ? ' selected-die' : '');
 
-            span.innerHTML = isLocked ? `${face} <span class="lock-icon">🔒</span>` : face;
+            span.innerHTML = isLocked ? `${face} <span class="lock-icon">(rerolled)</span>` : face;
             span.title = isLocked ? 'Rerolled (Tap to modify)' : 'Tap to modify';
             span.onclick = () => handleDieClick(idx);
             
