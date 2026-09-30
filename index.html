@@ -223,7 +223,7 @@
             box-shadow: 0 0 0 2px rgba(125, 60, 27, 0.2);
         }
 
-        /* Roll Action Bar */
+        /* Roll Action Bar (Dual Action) */
         .roll-action-container {
             display: flex;
             gap: 10px;
@@ -231,14 +231,27 @@
         }
 
         .btn-roll-main {
-            flex: 1;
-            height: 54px;
+            flex: 2;
+            height: 52px;
             font-size: 1.25rem;
             letter-spacing: 1px;
             text-transform: uppercase;
             box-shadow: 0 4px 8px rgba(92, 29, 29, 0.2);
             border-radius: 6px;
         }
+
+        .btn-roll-check {
+            flex: 1;
+            height: 52px;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 8px rgba(125, 60, 27, 0.2);
+            border-radius: 6px;
+            background-color: var(--accent-gold);
+            color: #fff;
+        }
+        .btn-roll-check:hover { background-color: #653015; }
 
         /* Results & Interactive Dice Card */
         .results-card {
@@ -258,6 +271,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .results-card-title {
@@ -266,6 +281,30 @@
             color: var(--accent-gold);
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mode-badge {
+            font-size: 0.72rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 2px 7px;
+            border-radius: 4px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.15s ease;
+        }
+        .mode-badge.mode-attack {
+            background: #fdf3e7;
+            color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
+        }
+        .mode-badge.mode-check {
+            background: var(--wyrd-bg);
+            color: var(--wyrd-purple);
+            border: 1px solid var(--wyrd-border);
         }
 
         .dice-tray {
@@ -317,11 +356,11 @@
         .die-token.plus-1x { background: #fcf4e8; border-color: var(--accent-gold); color: var(--accent-gold); }
         .die-token.minus-1x { background: #fdf0f0; border-color: var(--danger-red); color: var(--danger-red); }
 
-        /* Categorized Modifications Toolbar */
+        /* Categorized Modifications Panel */
         .modifications-panel {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
             margin-bottom: 14px;
             padding-top: 12px;
             border-top: 1px dashed var(--border-light);
@@ -335,13 +374,12 @@
         }
 
         .mod-label {
-            font-size: 0.76rem;
+            font-size: 0.78rem;
             font-weight: bold;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            min-width: 120px;
-            flex-shrink: 0;
+            width: 100%;
         }
 
         .mod-group {
@@ -779,7 +817,6 @@
             .preset-grid { grid-template-columns: repeat(2, 1fr); }
             .container { padding: 16px; }
             .modal-box-wyrd { padding: 14px; }
-            .mod-label { min-width: 100%; margin-bottom: 2px; }
         }
     </style>
 </head>
@@ -810,7 +847,7 @@
         </div>
 
         <div class="aspect-card">
-            <span class="aspect-name">Bonus Damage/Damage Reduction</span>
+            <span class="aspect-name">Bonus Damage/DR</span>
             <div class="stepper-container">
                 <button class="stepper-btn" onclick="stepStat('bonus', -1)">−</button>
                 <input type="number" id="bonus-val" class="aspect-val-input" value="0" min="0" oninput="onStatType('bonus')" onblur="onStatBlur('bonus')" onfocus="this.select()">
@@ -828,23 +865,27 @@
         </div>
     </div>
 
-    <!-- Roll Action -->
+    <!-- Dual Roll Action (Attack vs Check/Save) -->
     <div class="roll-action-container">
-        <button class="btn btn-primary btn-roll-main" onclick="rollDice()">Roll</button>
+        <button class="btn btn-primary btn-roll-main" onclick="rollDice('attack')" title="Standard Attack roll (Crits multiply)">Roll</button>
+        <button class="btn btn-roll-check" onclick="rollDice('check')" title="Check or Saving Throw (Never multiplied)">Check / Save</button>
     </div>
 
     <!-- Results Card -->
     <div class="results-card">
         <div class="results-card-header">
-            <span class="results-card-title">Dice Tray</span>
+            <div class="results-card-title">
+                <span>Dice Tray</span>
+                <span id="mode-badge" class="mode-badge mode-attack" onclick="toggleCurrentRollMode()" title="Click to toggle Attack vs Check/Save">⚔️ Attack</span>
+            </div>
             <div style="display: flex; gap: 8px; align-items: center;">
-                <span style="font-size: 0.78rem; color: var(--text-muted); font-style: italic;">Tap any die to modify</span>
+                <span style="font-size: 0.78rem; color: var(--text-muted); font-style: italic;">Tap die to modify</span>
                 <button class="btn btn-outline" style="height: 24px; padding: 0 8px; font-size: 0.72rem; color: var(--wyrd-purple); border-color: var(--wyrd-border);" onclick="openWyrdModal()">Wyrd Chart</button>
             </div>
         </div>
 
         <div id="dice-tray" class="dice-tray">
-            <span style="color: var(--text-muted); font-style: italic;">Tap "Roll" to generate results</span>
+            <span style="color: var(--text-muted); font-style: italic;">Tap "Roll" or "Check / Save" to generate results</span>
         </div>
 
         <!-- Categorized Modifications Panel -->
@@ -874,11 +915,11 @@
                         <button class="btn-step-sm" onclick="stepSkillUpgrade(1)" type="button">+</button>
                     </div>
                     <button class="btn-add-die btn-skill-upgrade" onclick="upgradeSkillsToHits()" title="Upgrade up to selected number of Skills into Hits">✦ Upgrade to Hits</button>
-                    <button class="btn-add-die" onclick="rerollAllSkills()" title="Reroll all un-rerolled Skill dice">⟳ Reroll All Skills</button>
+                    <button class="btn-add-die" onclick="rerollAllSkills()" title="Reroll all un-rerolled Skill dice">⟳ Reroll Skills</button>
                 </div>
             </div>
 
-            <!-- Row 3: Combat Rules & Tray Actions -->
+            <!-- Row 3: Multi-die Modification -->
             <div class="mod-row">
                 <span class="mod-label">Multi-die Modification:</span>
                 <div class="mod-group">
@@ -913,12 +954,12 @@
         </div>
     </div>
 
-<!-- Presets Section -->
+    <!-- Presets Section -->
     <h2>
         <span>Presets</span>
         <div style="display: flex; gap: 8px; align-items: center;">
             <button id="preset-update-btn" class="btn btn-gold" style="display: none; height: 28px; font-size: 0.8rem; padding: 0 10px;" onclick="updateActivePreset()">
-                Update
+                💾 Update
             </button>
             <button id="preset-revert-btn" class="btn btn-outline" style="display: none; height: 28px; font-size: 0.8rem; padding: 0 10px; color: var(--accent-gold); border-color: var(--accent-gold);" onclick="escapePresetMode()">
                 ✕ Unload
@@ -1042,6 +1083,7 @@
     let diceCount = 6;
     let bonus = 0;
     let critCount = 2;
+    let isCheckSave = false;
 
     // Interactive Tray State
     let activeDice = [];
@@ -1119,7 +1161,13 @@
     }
 
     /* Core Dice Rolling */
-    function rollDice() {
+    function rollDice(mode) {
+        if (mode === 'check') {
+            isCheckSave = true;
+        } else if (mode === 'attack') {
+            isCheckSave = false;
+        }
+
         activeDice = [];
         activeWyrdText = "";
         closeDieActionBar();
@@ -1132,6 +1180,12 @@
             activeDice.push({ face: word, rerolled: false });
         }
 
+        recalculateFromTray();
+    }
+
+    function toggleCurrentRollMode() {
+        isCheckSave = !isCheckSave;
+        breakPresetLock();
         recalculateFromTray();
     }
 
@@ -1246,7 +1300,7 @@
         renderDiceTokens(activeDice);
     }
 
-    /* Skill Modification Controls */
+    /* Skill Modifications */
     function stepSkillUpgrade(delta) {
         const input = document.getElementById('upgrade-skills-val');
         let val = parseInt(input.value, 10);
@@ -1323,7 +1377,7 @@
         recalculateFromTray();
     }
 
-    /* Combat Rules & Tray Actions */
+    /* Batch Tray Actions */
     function removeAllHits() {
         activeDice = activeDice.filter(die => {
             const face = (typeof die === 'string' ? die : die.face).split(' ')[0];
@@ -1387,6 +1441,20 @@
 
         renderDiceTokens(activeDice);
 
+        // Update Mode Badge in Tray Header
+        const badge = document.getElementById('mode-badge');
+        if (badge) {
+            if (isCheckSave) {
+                badge.className = 'mode-badge mode-check';
+                badge.innerText = '🛡️ Check / Save';
+                badge.title = 'Current roll is treated as Check/Save (Never multiplied). Click to switch to Attack.';
+            } else {
+                badge.className = 'mode-badge mode-attack';
+                badge.innerText = '⚔️ Attack';
+                badge.title = 'Current roll is treated as an Attack (Crits multiply). Click to switch to Check/Save.';
+            }
+        }
+
         // Update Wyrd Text Banner
         const banner = document.getElementById('wyrd-banner');
         const bannerText = document.getElementById('wyrd-banner-text');
@@ -1407,7 +1475,8 @@
 
         let effectiveMultiplier = Math.max(1, counts['Crit'] + counts['+1x'] - counts['-1x']);
 
-        if (counts['Crit'] > 0) {
+        // Check/Save rolls are NEVER multiplied
+        if (!isCheckSave && counts['Crit'] > 0) {
             totalAmount = totalAmount * effectiveMultiplier;
         }
 
@@ -1418,7 +1487,7 @@
         const totalVal = document.getElementById('total-val-text');
 
         totalContainer.style.display = 'flex';
-        totalLabel.innerText = "Total";
+        totalLabel.innerText = isCheckSave ? "Total (Check/Save)" : "Total Score";
         totalVal.innerText = damageAmount;
     }
 
@@ -1497,7 +1566,7 @@
         recalculateFromTray();
     }
 
-    /* Presets */
+    /* Presets: Update & Modification Logic */
     function handlePresetClick(num) {
         if (!presets[num]) {
             savePreset(num);
@@ -1508,13 +1577,57 @@
         }
     }
 
+    function updateActivePreset() {
+        if (activePresetId === null) return;
+        savePreset(activePresetId);
+        const updateBtn = document.getElementById('preset-update-btn');
+        if (updateBtn) updateBtn.style.display = 'none';
+        renderPresetSlots();
+    }
 
+    function loadPreset(num) {
+        if (!presets[num]) return;
+
+        if (activePresetId === null) {
+            manualBackupState = {
+                diceCount: diceCount,
+                bonus: bonus,
+                critCount: critCount,
+                isCheckSave: isCheckSave
+            };
+        }
+
+        activePresetId = num;
+        const p = presets[num];
+
+        diceCount = p.diceCount;
+        bonus = p.bonus;
+        critCount = (p.critCount !== undefined) ? p.critCount : 2;
+        isCheckSave = !!p.isCheckSave;
+
+        document.getElementById('dice-val').value = diceCount;
+        document.getElementById('bonus-val').value = bonus;
+        document.getElementById('crit-count-val').value = critCount;
+
+        const revertBtn = document.getElementById('preset-revert-btn');
+        if (revertBtn) {
+            revertBtn.style.display = 'inline-flex';
+            revertBtn.innerText = `✕ Unload "${presetNames[num]}"`;
+        }
+
+        const updateBtn = document.getElementById('preset-update-btn');
+        if (updateBtn) updateBtn.style.display = 'none';
+
+        renderPresetSlots();
+        recalculateFromTray();
+    }
 
     function savePreset(num) {
         presets[num] = {
             diceCount: diceCount,
             bonus: bonus,
-            critCount: critCount
+            critCount: critCount,
+            isCheckSave: isCheckSave
         };
 
         if (activeCharacterId && charactersData[activeCharacterId]) {
@@ -1524,69 +1637,16 @@
         renderPresetSlots();
     }
 
-    function handlePresetRightClick(e, num) {
-        e.preventDefault();
-        if (!presets[num]) return;
-        if (confirm("Clear " + presetNames[num] + "?")) {
-            delete presets[num];
-            presetNames[num] = "Preset " + num;
-            if (activePresetId === num) escapePresetMode();
-            if (activeCharacterId && charactersData[activeCharacterId]) {
-                charactersData[activeCharacterId].presets = presets;
-                charactersData[activeCharacterId].presetNames = presetNames;
-                localStorage.setItem('cs_characters', JSON.stringify(charactersData));
-            }
-            renderPresetSlots();
-        }
-    }
-
-
-
-    function renderPresetSlots() {
-        for (let i = 1; i <= 10; i++) {
-            const slot = document.getElementById('p-slot-' + i);
-            if (!slot) continue;
-            slot.innerText = presetNames[i] || ("Preset " + i);
-            slot.classList.remove('active', 'has-data');
-            if (activePresetId === i) slot.classList.add('active');
-            else if (presets[i]) slot.classList.add('has-data');
-        }
-    }
-
-/* Presets: Update & Modification Logic */
-    function updateActivePreset() {
-        if (activePresetId === null) return;
-        savePreset(activePresetId);
-        const updateBtn = document.getElementById('preset-update-btn');
-        if (updateBtn) updateBtn.style.display = 'none';
-        renderPresetSlots();
-    }
-
-    function breakPresetLock() {
-        // Keeps the preset active when adjusting stats, displaying the Update button and an asterisk (*)
-        if (activePresetId !== null) {
-            const updateBtn = document.getElementById('preset-update-btn');
-            if (updateBtn) {
-                updateBtn.style.display = 'inline-flex';
-                updateBtn.innerText = `💾 Update "${presetNames[activePresetId]}"`;
-            }
-            const slot = document.getElementById('p-slot-' + activePresetId);
-            if (slot) {
-                slot.innerText = (presetNames[activePresetId] || ("Preset " + activePresetId)) + " *";
-            }
-        }
-    }
-
     function renamePreset(num) {
         const cur = presetNames[num] || ("Preset " + num);
         const p = presets[num];
 
-        // If the preset has saved data and current stats differ, offer to update stats or rename
-        if (p && (p.diceCount !== diceCount || p.bonus !== bonus || p.critCount !== critCount)) {
+        // If stats differ from saved preset, offer update prompt
+        if (p && (p.diceCount !== diceCount || p.bonus !== bonus || p.critCount !== critCount || !!p.isCheckSave !== isCheckSave)) {
             const shouldUpdate = confirm(
                 `Update "${cur}" with current stats?\n\n` +
-                `• Current tray: Dice: ${diceCount}, Bonus: ${bonus}, Crit Count: ${critCount}\n` +
-                `• Saved preset: Dice: ${p.diceCount}, Bonus: ${p.bonus}, Crit Count: ${p.critCount}\n\n` +
+                `• Current values: Dice: ${diceCount}, Bonus: ${bonus}, Crit: ${critCount}, Check/Save: ${isCheckSave ? 'Yes' : 'No'}\n` +
+                `• Saved values: Dice: ${p.diceCount}, Bonus: ${p.bonus}, Crit: ${p.critCount}, Check/Save: ${p.isCheckSave ? 'Yes' : 'No'}\n\n` +
                 `Click OK to UPDATE stats.\nClick Cancel to RENAME preset.`
             );
             if (shouldUpdate) {
@@ -1617,38 +1677,20 @@
         }
     }
 
-    function loadPreset(num) {
+    function handlePresetRightClick(e, num) {
+        e.preventDefault();
         if (!presets[num]) return;
-
-        if (activePresetId === null) {
-            manualBackupState = {
-                diceCount: diceCount,
-                bonus: bonus,
-                critCount: critCount
-            };
+        if (confirm("Clear " + presetNames[num] + "?")) {
+            delete presets[num];
+            presetNames[num] = "Preset " + num;
+            if (activePresetId === num) escapePresetMode();
+            if (activeCharacterId && charactersData[activeCharacterId]) {
+                charactersData[activeCharacterId].presets = presets;
+                charactersData[activeCharacterId].presetNames = presetNames;
+                localStorage.setItem('cs_characters', JSON.stringify(charactersData));
+            }
+            renderPresetSlots();
         }
-
-        activePresetId = num;
-        const p = presets[num];
-
-        diceCount = p.diceCount;
-        bonus = p.bonus;
-        critCount = (p.critCount !== undefined) ? p.critCount : 2;
-
-        document.getElementById('dice-val').value = diceCount;
-        document.getElementById('bonus-val').value = bonus;
-        document.getElementById('crit-count-val').value = critCount;
-
-        const revertBtn = document.getElementById('preset-revert-btn');
-        if (revertBtn) {
-            revertBtn.style.display = 'inline-flex';
-            revertBtn.innerText = `✕ Unload "${presetNames[num]}"`;
-        }
-
-        const updateBtn = document.getElementById('preset-update-btn');
-        if (updateBtn) updateBtn.style.display = 'none';
-
-        renderPresetSlots();
     }
 
     function escapePresetMode() {
@@ -1657,6 +1699,7 @@
             diceCount = b.diceCount;
             bonus = b.bonus;
             critCount = b.critCount;
+            isCheckSave = !!b.isCheckSave;
 
             document.getElementById('dice-val').value = diceCount;
             document.getElementById('bonus-val').value = bonus;
@@ -1673,6 +1716,32 @@
         if (updateBtn) updateBtn.style.display = 'none';
 
         renderPresetSlots();
+        recalculateFromTray();
+    }
+
+    function breakPresetLock() {
+        if (activePresetId !== null) {
+            const updateBtn = document.getElementById('preset-update-btn');
+            if (updateBtn) {
+                updateBtn.style.display = 'inline-flex';
+                updateBtn.innerText = `💾 Update "${presetNames[activePresetId]}"`;
+            }
+            const slot = document.getElementById('p-slot-' + activePresetId);
+            if (slot) {
+                slot.innerText = (presetNames[activePresetId] || ("Preset " + activePresetId)) + " *";
+            }
+        }
+    }
+
+    function renderPresetSlots() {
+        for (let i = 1; i <= 10; i++) {
+            const slot = document.getElementById('p-slot-' + i);
+            if (!slot) continue;
+            slot.innerText = presetNames[i] || ("Preset " + i);
+            slot.classList.remove('active', 'has-data');
+            if (activePresetId === i) slot.classList.add('active');
+            else if (presets[i]) slot.classList.add('has-data');
+        }
     }
 
     /* Character Profiles */
@@ -1696,7 +1765,7 @@
         const id = "char_" + Date.now();
         charactersData[id] = {
             name: name,
-            diceCount: 6, bonus: 0, critCount: 2,
+            diceCount: 6, bonus: 0, critCount: 2, isCheckSave: false,
             presets: {},
             presetNames: {
                 1:"Preset 1", 2:"Preset 2", 3:"Preset 3", 4:"Preset 4", 5:"Preset 5",
@@ -1721,6 +1790,7 @@
         charactersData[activeCharacterId].diceCount = diceCount;
         charactersData[activeCharacterId].bonus = bonus;
         charactersData[activeCharacterId].critCount = critCount;
+        charactersData[activeCharacterId].isCheckSave = isCheckSave;
 
         charactersData[activeCharacterId].presets = presets;
         charactersData[activeCharacterId].presetNames = presetNames;
@@ -1746,6 +1816,7 @@
         diceCount = data.diceCount || 6;
         bonus = data.bonus || 0;
         critCount = (data.critCount !== undefined) ? data.critCount : 2;
+        isCheckSave = !!data.isCheckSave;
 
         document.getElementById('dice-val').value = diceCount;
         document.getElementById('bonus-val').value = bonus;
@@ -1759,6 +1830,7 @@
 
         escapePresetMode();
         renderPresetSlots();
+        recalculateFromTray();
     }
 
     function deleteActiveCharacter() {
