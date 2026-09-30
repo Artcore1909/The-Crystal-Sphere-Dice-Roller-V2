@@ -272,7 +272,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             min-height: 36px;
             align-items: center;
         }
@@ -317,29 +317,50 @@
         .die-token.plus-1x { background: #fcf4e8; border-color: var(--accent-gold); color: var(--accent-gold); }
         .die-token.minus-1x { background: #fdf0f0; border-color: var(--danger-red); color: var(--danger-red); }
 
-        /* Add Die Toolbar */
-        .add-dice-toolbar {
+        /* Categorized Modifications Toolbar */
+        .modifications-panel {
             display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 10px;
             margin-bottom: 14px;
-            padding-top: 8px;
+            padding-top: 12px;
             border-top: 1px dashed var(--border-light);
         }
 
-        .add-dice-label {
-            font-size: 0.78rem;
+        .mod-row {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        .mod-label {
+            font-size: 0.76rem;
             font-weight: bold;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-right: 4px;
+            min-width: 120px;
+            flex-shrink: 0;
+        }
+
+        .mod-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-divider {
+            color: var(--border-dark);
+            user-select: none;
+            margin: 0 4px;
+            opacity: 0.6;
         }
 
         .btn-add-die {
             height: 28px;
-            padding: 0 10px;
+            padding: 0 9px;
             font-size: 0.8rem;
             font-weight: bold;
             border-radius: 4px;
@@ -378,6 +399,69 @@
             background: #fdf0f0;
             border-color: var(--danger-red);
             color: var(--danger-red);
+        }
+
+        .btn-add-die.btn-skill-upgrade {
+            background: #edf7f4;
+            border-color: var(--success-border);
+            color: var(--success-green);
+        }
+
+        /* Compact Stepper for Numeric Modifiers */
+        .inline-counter-group {
+            display: inline-flex;
+            align-items: center;
+            background: #fff;
+            border: 1px solid var(--border-dark);
+            border-radius: 4px;
+            overflow: hidden;
+            height: 28px;
+        }
+
+        .btn-step-sm {
+            width: 26px;
+            height: 100%;
+            border: none;
+            background: transparent;
+            color: var(--primary-red);
+            font-weight: bold;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            transition: background 0.12s;
+            user-select: none;
+        }
+
+        .btn-step-sm:hover { background-color: var(--bg-cream-dark); }
+        .btn-step-sm:active { background-color: var(--border-light); }
+
+        .input-step-sm {
+            width: 32px;
+            height: 100%;
+            border: none;
+            border-left: 1px solid var(--border-light);
+            border-right: 1px solid var(--border-light);
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.85rem;
+            color: var(--text-dark);
+            padding: 0;
+            margin: 0;
+            -moz-appearance: textfield;
+        }
+
+        .input-step-sm::-webkit-outer-spin-button,
+        .input-step-sm::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .input-step-sm:focus {
+            outline: none;
+            background-color: #faf7f2;
         }
 
         /* Die Action Bar */
@@ -695,6 +779,7 @@
             .preset-grid { grid-template-columns: repeat(2, 1fr); }
             .container { padding: 16px; }
             .modal-box-wyrd { padding: 14px; }
+            .mod-label { min-width: 100%; margin-bottom: 2px; }
         }
     </style>
 </head>
@@ -762,24 +847,47 @@
             <span style="color: var(--text-muted); font-style: italic;">Tap "Roll" to generate results</span>
         </div>
 
-<!-- Add Result Toolbar -->
-        <div class="add-dice-toolbar">
-            <span class="add-dice-label">Additional Modifications:</span>
-            <div class="add-dice-buttons">
-                <button class="btn-add-die add-Crit" onclick="addManualDie('Crit')">+ Crit</button>
-                <button class="btn-add-die add-Hit" onclick="addManualDie('Hit')">+ Hit</button>
-                <button class="btn-add-die add-Skill" onclick="addManualDie('Skill')">+ Skill</button>
-                <button class="btn-add-die add-Wyrd" onclick="addManualDie('Wyrd')">+ Wyrd</button>
-                <button class="btn-add-die add-Blank" onclick="addManualDie('Blank')">+ Blank</button>
-                <span class="toolbar-divider">|</span>
-                <button class="btn-add-die add-plus-1x" onclick="addManualDie('+1x')">+1x</button>
-                <button class="btn-add-die add-minus-1x" onclick="addManualDie('-1x')">-1x</button>
-                <span class="toolbar-divider">|</span>
-                <button class="btn-add-die add-adv" onclick="applyAdvantage()" title="Convert all Hits to Crits">Advantage</button>
-                <button class="btn-add-die add-disadv" onclick="applyDisadvantage()" title="Remove all Hits">Disadvantage</button>
-                <button class="btn-add-die" onclick="rerollAllBlanks()" title="Reroll all un-rerolled Blanks">Reroll Blanks</button>
-                <button class="btn-add-die" onclick="removeAllSkills()" title="Remove all Skills">Remove Skills</button>
-                <button class="btn-add-die" onclick="removeAllHits()" title="Remove all Hits">Remove Hits</button>
+        <!-- Categorized Modifications Panel -->
+        <div class="modifications-panel">
+            <!-- Row 1: Add Results & Multipliers -->
+            <div class="mod-row">
+                <span class="mod-label">Add Results & Manipulate Modifier:</span>
+                <div class="mod-group">
+                    <button class="btn-add-die add-Crit" onclick="addManualDie('Crit')" title="Add Crit die">+ Crit</button>
+                    <button class="btn-add-die add-Hit" onclick="addManualDie('Hit')" title="Add Hit die">+ Hit</button>
+                    <button class="btn-add-die add-Skill" onclick="addManualDie('Skill')" title="Add Skill die">+ Skill</button>
+                    <button class="btn-add-die add-Wyrd" onclick="addManualDie('Wyrd')" title="Add Wyrd die">+ Wyrd</button>
+                    <button class="btn-add-die add-Blank" onclick="addManualDie('Blank')" title="Add Blank die">+ Blank</button>
+                    <span class="toolbar-divider">|</span>
+                    <button class="btn-add-die add-plus-1x" onclick="addManualDie('+1x')" title="Add +1x Multiplier">+1x</button>
+                    <button class="btn-add-die add-minus-1x" onclick="addManualDie('-1x')" title="Add -1x Multiplier">-1x</button>
+                </div>
+            </div>
+
+            <!-- Row 2: Skill Modifications -->
+            <div class="mod-row">
+                <span class="mod-label">Proficiency & Extra Training:</span>
+                <div class="mod-group">
+                    <div class="inline-counter-group" title="Select number of skills to upgrade (1-6)">
+                        <button class="btn-step-sm" onclick="stepSkillUpgrade(-1)" type="button">−</button>
+                        <input type="number" id="upgrade-skills-val" class="input-step-sm" value="1" min="1" max="6" oninput="clampSkillUpgradeInput(this)" onblur="onSkillUpgradeBlur(this)">
+                        <button class="btn-step-sm" onclick="stepSkillUpgrade(1)" type="button">+</button>
+                    </div>
+                    <button class="btn-add-die btn-skill-upgrade" onclick="upgradeSkillsToHits()" title="Upgrade up to selected number of Skills into Hits">✦ Upgrade to Hits</button>
+                    <button class="btn-add-die" onclick="rerollAllSkills()" title="Reroll all un-rerolled Skill dice">⟳ Reroll All Skills</button>
+                </div>
+            </div>
+
+            <!-- Row 3: Combat Rules & Tray Actions -->
+            <div class="mod-row">
+                <span class="mod-label">Multi-die Modification:</span>
+                <div class="mod-group">
+                    <button class="btn-add-die add-adv" onclick="applyAdvantage()" title="Convert all Hits to Crits">Advantage</button>
+                    <button class="btn-add-die add-disadv" onclick="applyDisadvantage()" title="Remove all Hits">Disadvantage</button>
+                    <button class="btn-add-die" onclick="rerollAllBlanks()" title="Reroll all un-rerolled Blanks">⟳ Reroll Blanks</button>
+                    <button class="btn-add-die" onclick="removeAllHits()" title="Remove all Hits from tray">✕ Remove Hits</button>
+                    <button class="btn-add-die" onclick="removeAllSkills()" title="Remove all Skills from tray">✕ Remove Skills</button>
+                </div>
             </div>
         </div>
 
@@ -1133,7 +1241,74 @@
         renderDiceTokens(activeDice);
     }
 
-    /* Batch Tray Actions */
+    /* Skill Modification Controls */
+    function stepSkillUpgrade(delta) {
+        const input = document.getElementById('upgrade-skills-val');
+        let val = parseInt(input.value, 10);
+        if (isNaN(val)) val = 1;
+        val = Math.max(1, Math.min(6, val + delta));
+        input.value = val;
+    }
+
+    function clampSkillUpgradeInput(input) {
+        let val = parseInt(input.value, 10);
+        if (isNaN(val)) return;
+        if (val > 6) input.value = 6;
+        if (val < 1) input.value = 1;
+    }
+
+    function onSkillUpgradeBlur(input) {
+        let val = parseInt(input.value, 10);
+        if (isNaN(val) || val < 1) input.value = 1;
+        else if (val > 6) input.value = 6;
+    }
+
+    function upgradeSkillsToHits() {
+        const input = document.getElementById('upgrade-skills-val');
+        let numToUpgrade = parseInt(input ? input.value : 1, 10);
+        if (isNaN(numToUpgrade) || numToUpgrade < 1) numToUpgrade = 1;
+        numToUpgrade = Math.min(6, numToUpgrade);
+
+        let upgraded = 0;
+        for (let i = 0; i < activeDice.length && upgraded < numToUpgrade; i++) {
+            const face = (typeof activeDice[i] === 'string' ? activeDice[i] : activeDice[i].face).split(' ')[0];
+            if (face === 'Skill') {
+                activeDice[i].face = 'Hit';
+                upgraded++;
+            }
+        }
+
+        closeDieActionBar();
+        recalculateFromTray();
+    }
+
+    function rerollAllSkills() {
+        let count = 0;
+        activeDice.forEach(die => {
+            const face = (typeof die === 'string' ? die : die.face).split(' ')[0];
+            if (face === 'Skill' && !die.rerolled) count++;
+        });
+
+        if (count === 0) return;
+
+        const array = new Uint32Array(count);
+        window.crypto.getRandomValues(array);
+        let idx = 0;
+
+        activeDice.forEach(die => {
+            const face = (typeof die === 'string' ? die : die.face).split(' ')[0];
+            if (face === 'Skill' && !die.rerolled) {
+                let word = words[array[idx++] % words.length];
+                if (word === 'Weird') word = 'Wyrd';
+                die.face = word;
+                die.rerolled = true;
+            }
+        });
+
+        closeDieActionBar();
+        recalculateFromTray();
+    }
+
     function removeAllSkills() {
         activeDice = activeDice.filter(die => {
             const face = (typeof die === 'string' ? die : die.face).split(' ')[0];
@@ -1143,6 +1318,7 @@
         recalculateFromTray();
     }
 
+    /* Combat Rules & Tray Actions */
     function removeAllHits() {
         activeDice = activeDice.filter(die => {
             const face = (typeof die === 'string' ? die : die.face).split(' ')[0];
@@ -1237,7 +1413,7 @@
         const totalVal = document.getElementById('total-val-text');
 
         totalContainer.style.display = 'flex';
-        totalLabel.innerText = "Total Score";
+        totalLabel.innerText = "Total";
         totalVal.innerText = damageAmount;
     }
 
@@ -1256,7 +1432,6 @@
             sub.innerText = "No Wyrd dice currently in tray. Purchasing an option requires matching Wyrd results.";
         }
 
-        // Enable/disable cells in all rows based on column Wyrd cost
         for (let cost = 1; cost <= 6; cost++) {
             const th = document.getElementById('col-w-' + cost);
             if (th) {
@@ -1292,7 +1467,6 @@
             return;
         }
 
-        // Remove exactly wyrdCost Wyrd dice from the tray, regardless of which die was clicked
         let removed = 0;
         for (let i = activeDice.length - 1; i >= 0 && removed < wyrdCost; i--) {
             const f = (typeof activeDice[i] === 'string' ? activeDice[i] : activeDice[i].face).split(' ')[0];
@@ -1302,7 +1476,6 @@
             }
         }
 
-        // Apply effect
         if (effectType === 'Skill' || effectType === 'Hit' || effectType === 'Crit') {
             activeDice.push({ face: effectType, rerolled: false });
         } else {
