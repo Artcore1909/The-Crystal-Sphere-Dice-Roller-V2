@@ -913,15 +913,20 @@
         </div>
     </div>
 
-    <!-- Presets Section -->
+<!-- Presets Section -->
     <h2>
         <span>Presets</span>
-        <button id="preset-revert-btn" class="btn btn-outline" style="display: none; height: 28px; font-size: 0.8rem; padding: 0 10px; color: var(--accent-gold); border-color: var(--accent-gold);" onclick="escapePresetMode()">
-            ✕ Unload
-        </button>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <button id="preset-update-btn" class="btn btn-gold" style="display: none; height: 28px; font-size: 0.8rem; padding: 0 10px;" onclick="updateActivePreset()">
+                Update
+            </button>
+            <button id="preset-revert-btn" class="btn btn-outline" style="display: none; height: 28px; font-size: 0.8rem; padding: 0 10px; color: var(--accent-gold); border-color: var(--accent-gold);" onclick="escapePresetMode()">
+                ✕ Unload
+            </button>
+        </div>
     </h2>
     <div style="font-size: 0.8rem; color: var(--text-muted); font-style: italic; margin-top: -6px; margin-bottom: 10px;">
-        Click to Save / Load • Double-click to Rename • Right-click to Clear
+        Click to Load / Unload • Double-click to Update / Rename • Right-click to Clear
     </div>
 
     <div class="preset-grid" id="presets-grid">
@@ -1503,6 +1508,115 @@
         }
     }
 
+
+
+    function savePreset(num) {
+        presets[num] = {
+            diceCount: diceCount,
+            bonus: bonus,
+            critCount: critCount
+        };
+
+        if (activeCharacterId && charactersData[activeCharacterId]) {
+            charactersData[activeCharacterId].presets = presets;
+            localStorage.setItem('cs_characters', JSON.stringify(charactersData));
+        }
+        renderPresetSlots();
+    }
+
+    function handlePresetRightClick(e, num) {
+        e.preventDefault();
+        if (!presets[num]) return;
+        if (confirm("Clear " + presetNames[num] + "?")) {
+            delete presets[num];
+            presetNames[num] = "Preset " + num;
+            if (activePresetId === num) escapePresetMode();
+            if (activeCharacterId && charactersData[activeCharacterId]) {
+                charactersData[activeCharacterId].presets = presets;
+                charactersData[activeCharacterId].presetNames = presetNames;
+                localStorage.setItem('cs_characters', JSON.stringify(charactersData));
+            }
+            renderPresetSlots();
+        }
+    }
+
+
+
+    function renderPresetSlots() {
+        for (let i = 1; i <= 10; i++) {
+            const slot = document.getElementById('p-slot-' + i);
+            if (!slot) continue;
+            slot.innerText = presetNames[i] || ("Preset " + i);
+            slot.classList.remove('active', 'has-data');
+            if (activePresetId === i) slot.classList.add('active');
+            else if (presets[i]) slot.classList.add('has-data');
+        }
+    }
+
+/* Presets: Update & Modification Logic */
+    function updateActivePreset() {
+        if (activePresetId === null) return;
+        savePreset(activePresetId);
+        const updateBtn = document.getElementById('preset-update-btn');
+        if (updateBtn) updateBtn.style.display = 'none';
+        renderPresetSlots();
+    }
+
+    function breakPresetLock() {
+        // Keeps the preset active when adjusting stats, displaying the Update button and an asterisk (*)
+        if (activePresetId !== null) {
+            const updateBtn = document.getElementById('preset-update-btn');
+            if (updateBtn) {
+                updateBtn.style.display = 'inline-flex';
+                updateBtn.innerText = `💾 Update "${presetNames[activePresetId]}"`;
+            }
+            const slot = document.getElementById('p-slot-' + activePresetId);
+            if (slot) {
+                slot.innerText = (presetNames[activePresetId] || ("Preset " + activePresetId)) + " *";
+            }
+        }
+    }
+
+    function renamePreset(num) {
+        const cur = presetNames[num] || ("Preset " + num);
+        const p = presets[num];
+
+        // If the preset has saved data and current stats differ, offer to update stats or rename
+        if (p && (p.diceCount !== diceCount || p.bonus !== bonus || p.critCount !== critCount)) {
+            const shouldUpdate = confirm(
+                `Update "${cur}" with current stats?\n\n` +
+                `• Current tray: Dice: ${diceCount}, Bonus: ${bonus}, Crit Count: ${critCount}\n` +
+                `• Saved preset: Dice: ${p.diceCount}, Bonus: ${p.bonus}, Crit Count: ${p.critCount}\n\n` +
+                `Click OK to UPDATE stats.\nClick Cancel to RENAME preset.`
+            );
+            if (shouldUpdate) {
+                savePreset(num);
+                if (activePresetId === num) {
+                    const updateBtn = document.getElementById('preset-update-btn');
+                    if (updateBtn) updateBtn.style.display = 'none';
+                }
+                return;
+            }
+        }
+
+        const name = prompt("Rename preset " + num + ":", cur);
+        if (name && name.trim()) {
+            presetNames[num] = name.trim();
+            if (activeCharacterId && charactersData[activeCharacterId]) {
+                charactersData[activeCharacterId].presetNames = presetNames;
+                localStorage.setItem('cs_characters', JSON.stringify(charactersData));
+            }
+            if (activePresetId === num) {
+                document.getElementById('preset-revert-btn').innerText = `✕ Unload "${presetNames[num]}"`;
+                const updateBtn = document.getElementById('preset-update-btn');
+                if (updateBtn && updateBtn.style.display !== 'none') {
+                    updateBtn.innerText = `💾 Update "${presetNames[num]}"`;
+                }
+            }
+            renderPresetSlots();
+        }
+    }
+
     function loadPreset(num) {
         if (!presets[num]) return;
 
@@ -1531,53 +1645,10 @@
             revertBtn.innerText = `✕ Unload "${presetNames[num]}"`;
         }
 
+        const updateBtn = document.getElementById('preset-update-btn');
+        if (updateBtn) updateBtn.style.display = 'none';
+
         renderPresetSlots();
-    }
-
-    function savePreset(num) {
-        presets[num] = {
-            diceCount: diceCount,
-            bonus: bonus,
-            critCount: critCount
-        };
-
-        if (activeCharacterId && charactersData[activeCharacterId]) {
-            charactersData[activeCharacterId].presets = presets;
-            localStorage.setItem('cs_characters', JSON.stringify(charactersData));
-        }
-        renderPresetSlots();
-    }
-
-    function renamePreset(num) {
-        const cur = presetNames[num] || ("Preset " + num);
-        const name = prompt("Rename preset " + num + ":", cur);
-        if (name && name.trim()) {
-            presetNames[num] = name.trim();
-            if (activeCharacterId && charactersData[activeCharacterId]) {
-                charactersData[activeCharacterId].presetNames = presetNames;
-                localStorage.setItem('cs_characters', JSON.stringify(charactersData));
-            }
-            if (activePresetId === num) {
-                document.getElementById('preset-revert-btn').innerText = `✕ Unload "${presetNames[num]}"`;
-            }
-            renderPresetSlots();
-        }
-    }
-
-    function handlePresetRightClick(e, num) {
-        e.preventDefault();
-        if (!presets[num]) return;
-        if (confirm("Clear " + presetNames[num] + "?")) {
-            delete presets[num];
-            presetNames[num] = "Preset " + num;
-            if (activePresetId === num) escapePresetMode();
-            if (activeCharacterId && charactersData[activeCharacterId]) {
-                charactersData[activeCharacterId].presets = presets;
-                charactersData[activeCharacterId].presetNames = presetNames;
-                localStorage.setItem('cs_characters', JSON.stringify(charactersData));
-            }
-            renderPresetSlots();
-        }
     }
 
     function escapePresetMode() {
@@ -1598,28 +1669,10 @@
         const revertBtn = document.getElementById('preset-revert-btn');
         if (revertBtn) revertBtn.style.display = 'none';
 
+        const updateBtn = document.getElementById('preset-update-btn');
+        if (updateBtn) updateBtn.style.display = 'none';
+
         renderPresetSlots();
-    }
-
-    function breakPresetLock() {
-        if (activePresetId !== null) {
-            activePresetId = null;
-            manualBackupState = null;
-            const revertBtn = document.getElementById('preset-revert-btn');
-            if (revertBtn) revertBtn.style.display = 'none';
-            renderPresetSlots();
-        }
-    }
-
-    function renderPresetSlots() {
-        for (let i = 1; i <= 10; i++) {
-            const slot = document.getElementById('p-slot-' + i);
-            if (!slot) continue;
-            slot.innerText = presetNames[i] || ("Preset " + i);
-            slot.classList.remove('active', 'has-data');
-            if (activePresetId === i) slot.classList.add('active');
-            else if (presets[i]) slot.classList.add('has-data');
-        }
     }
 
     /* Character Profiles */
